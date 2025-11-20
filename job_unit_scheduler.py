@@ -1,21 +1,24 @@
+class Job:
+    def __init__(self, job_id, name, description, deadline):
+        self.id = job_id
+        self.name = name
+        self.description = description
+        self.deadline = deadline
+        self.units=[]
+        self.complete=False
+
+    def __str__(self):
+        status = "Completed" if self.complete else "Pending"
+        return f"[{self.id}] {self.name} - {status}"
+
 class JobUnitScheduler:
     def __init__(self):
-        # make an empty list to store all jobs
-        self.jobs = []
-    #add job
+        self.jobs=[]
+        self.next_id = 1
+
+    #US1: Add Job
     def add_job(self, name, description, deadline):
-        #create a new job id by counting how many jobs are already there
-        jobid = len(self.jobs) + 1
-        #put all job details into one dictionary
-        job = {
-            "id": jobid,
-            "name": name,
-            "description": description,
-            "deadline": deadline,
-            "status": "active",
-            "units": []
-        }
-        #add this job into the main list
+        job = Job(self.next_id, name, description, deadline)
         self.jobs.append(job)
-        #give back the job id so i can use it later
-        return jobid
+        self.next_id += 1
+        return job
