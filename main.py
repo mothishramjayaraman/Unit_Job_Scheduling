@@ -1,7 +1,8 @@
 from job_unit_scheduler import JobUnitScheduler
 s=JobUnitScheduler()
-print("Welcome to Job Scheduler")
 print("\n")
+print("Welcome to Job Scheduler")
+
 
 def show_menu():
     print("\n===Job Scheduler Menu ===)")# manage your jobs
@@ -19,3 +20,14 @@ deadline = input("Enter job deadline (YYYY-MM-DD): ")
 job = s.add_job(name, description, deadline)
 
 print(f"\nJob added successfully! Job ID: {job.id}")
+
+#Us2: View all jobs
+print("\n2. View All Jobs (US2)")
+jobs = s.view_all_jobs()
+
+if len(jobs) == 0:
+    print("No jobs found.")
+else:
+    print("\n All Jobs")
+    for job in jobs:
+        print(f"ID: {job.id}, Name: {job.name}, Description: {job.description}, Deadline: {job.deadline}, Units:{len(job.units)}")
