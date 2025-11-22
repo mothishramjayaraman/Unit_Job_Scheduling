@@ -23,6 +23,6 @@ class JobUnitScheduler:
         self.next_id += 1
         return job
 
-    #US2: View All Jobs
-    def view_all_jobs(self):
+    #US2: List All Jobs
+    def list_jobs(self):
         return self.jobs
