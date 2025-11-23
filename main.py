@@ -34,11 +34,9 @@ while True:
         else:
             for job in jobs:
                 print(f"Job ID: {job.id},"
-                      f" Name: {job.name},"
-                      f" Description: {job.description},"
-                      f" Deadline: {job.deadline}")
+                      f" {job.name}")
 
-     elif choice=="0":
+    elif choice=="0":
         print("Exiting...")
         break
     else:
