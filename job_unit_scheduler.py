@@ -42,3 +42,11 @@ class JobUnitScheduler:
                 job.description = description
                 return job
         return None
+
+    #US5: Rename job
+    def rename_job(self, old_name, new_name):
+        for job in self.jobs:
+            if job.id == old_name:
+                job.name = new_name
+                return True
+        return False
