@@ -29,17 +29,13 @@ while True:
     elif choice=="2":
         print("=>List Jobs (US2)")
         jobs = s.list_jobs()
-        if len(jobs) == 0:
+        if len(jobs)==0:
             print("No jobs found.")
         else:
             for job in jobs:
-                print(f"Job ID: {job.id},"
-                      f" Name: {job.name}, "
-                      f"Description: {job.description}, "
-                      f"Deadline: {job.deadline}")
+                print(f"Job ID: {job.id}, Name: {job.name}, Description: {job.description}, Deadline: {job.deadline}")
 
-
-    elif choice=="0":
+     elif choice=="0":
         print("Exiting...")
         break
     else:
