@@ -25,7 +25,7 @@ while True:
 
          print(f"\nJob added successfully! Job ID: {job.id}")
 
-    #US2: List  all Jobs
+    #US2: List all Jobs
     elif choice=="2":
         print("=>List Jobs (US2)")
         jobs = s.list_jobs()
