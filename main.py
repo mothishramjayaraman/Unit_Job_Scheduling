@@ -36,8 +36,7 @@ while True:
             for job in jobs:
                 print(f"Job ID: {job.id}, ")
                 print(f"Name: {job.name}, ")
-                print(f"Description: {job.description},")
-                print(f" Deadline: {job.deadline}")
+
 
     #US3: View a job
     elif choice=="3":
