@@ -38,7 +38,7 @@ while True:
                 print(f"Name: {job.name}, ")
 
 
-    #US3: View a job
+    #US3: View a job by ID
     elif choice=="3":
         print("\n=> View Job")
         job_id =int(input("Enter job ID to view: "))
