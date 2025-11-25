@@ -34,3 +34,11 @@ class JobUnitScheduler:
                 return job
 
         return None
+
+    #US4: Edit Job Description
+    def edit_job_description(self, job_id, description):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.description = description
+                return job
+        return None

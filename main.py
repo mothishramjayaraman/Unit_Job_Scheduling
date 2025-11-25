@@ -8,6 +8,7 @@ def show_menu():
     print("1. Add Job (US1)")
     print("2. List Jobs (US2)")
     print("3. View Job (US3)")
+    print("4. Edit Job Description (US4)")
     print("0. Exit")
 
 while True:
@@ -36,8 +37,7 @@ while True:
             for job in jobs:
                 print(f"Job ID: {job.id}, ")
                 print(f"Name: {job.name}, ")
-                print(f"Description: {job.description},")
-                print(f" Deadline: {job.deadline}")
+
 
     #US3: View a job
     elif choice=="3":
@@ -50,6 +50,18 @@ while True:
             print(f"Name: {job.name}, ")
             print(f"Description: {job.description},")
             print(f"Deadline: {job.deadline}")
+        else:
+            print("\nJob not found.")
+
+    #US4: Edit job description
+    elif choice=="4":
+        print("\n=> Edit Job Description")
+        job_id = int(input("Enter job ID to edit: "))
+        new_desc = input("Enter new job description: ")
+
+        updated_job = s.edit_job_description(job_id, new_desc)
+        if updated_job:
+            print("\nJob description updated successfully!")
         else:
             print("\nJob not found.")
 
