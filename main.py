@@ -7,12 +7,13 @@ def show_menu():
     print("===Job Scheduler Menu ===)")# manage your jobs
     print("1. Add Job (US1)")
     print("2. List Jobs (US2)")
+    print("3. View Job (US3)")
     print("0. Exit")
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice (1,2 or 0):- ")
+    choice=input("Enter your choice (1,2,3 or 0):- ")
 
     #US1: Add job
     if choice=="1":
@@ -33,8 +34,24 @@ while True:
             print("No jobs found.")
         else:
             for job in jobs:
-                print(f"Job ID: {job.id},"
-                      f" {job.name}")
+                print(f"Job ID: {job.id}, ")
+                print(f"Name: {job.name}, ")
+                print(f"Description: {job.description},")
+                print(f" Deadline: {job.deadline}")
+
+    #US3: View a job
+    elif choice=="3":
+        print("\n=> View Job")
+        job_id =int(input("Enter job ID to view: "))
+
+        job = s.view_job(job_id)
+        if job:
+            print(f"Job ID: {job.id}")
+            print(f"Name: {job.name}, ")
+            print(f"Description: {job.description},")
+            print(f"Deadline: {job.deadline}")
+        else:
+            print("\nJob not found.")
 
     elif choice=="0":
         print("Exiting...")

@@ -26,3 +26,11 @@ class JobUnitScheduler:
     #US2: List All Jobs
     def list_jobs(self):
         return self.jobs
+
+    #US3: View a job by ID
+    def view_job(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                return job
+
+        return None
