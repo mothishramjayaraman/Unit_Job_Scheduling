@@ -9,12 +9,13 @@ def show_menu():
     print("2. List Jobs (US2)")
     print("3. View Job (US3)")
     print("4. Edit Job Description (US4)")
+    print("5. Rename Job (Us5)")
     print("0. Exit")
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice (1,2,3 or 0):- ")
+    choice=input("Enter your choice (0 to 5):- ")
 
     #US1: Add job
     if choice=="1":
@@ -64,6 +65,19 @@ while True:
             print("\nJob description updated successfully!")
         else:
             print("\nJob not found.")
+
+    #US5: Rename job
+    elif choice=="5":
+        print("\n=> Rename Job")
+        job_id = int(input("Enter job ID to rename: "))
+        new_name = input("Enter new job name: ")
+
+        s1 = s.rename_job(job_id, new_name)
+        if s1:
+            print("\nJob renamed successfully!")
+        else:
+            print("\nJob not found.")
+
 
     elif choice=="0":
         print("Exiting...")
