@@ -66,3 +66,10 @@ class JobUnitScheduler:
                 job.units.append(name)
                 return True
         return False
+
+    #US8: View units by Job ID
+    def view_units(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                return job.units # return the list of units
+        return None #job not found
