@@ -73,3 +73,11 @@ class JobUnitScheduler:
             if job.id == job_id:
                 return job.units # return the list of units
         return None #job not found
+
+    # US9: Complete a job
+    def complete_job(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.complete = True
+                return True  # job marked completed
+        return False  # job not found
