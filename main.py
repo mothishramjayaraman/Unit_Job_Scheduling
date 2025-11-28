@@ -16,7 +16,7 @@ def show_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice (1,2,3 or 0):- ")
+    choice=input("Enter your choice ( 1 to 6):- ")
 
     #US1: Add job
     if choice=="1":
@@ -39,8 +39,7 @@ while True:
             for job in jobs:
                 print(f"Job ID: {job.id}, ")
                 print(f"Name: {job.name}, ")
-                print(f"Description: {job.description},")
-                print(f" Deadline: {job.deadline}")
+
 
     #US3: View a job
     elif choice=="3":
