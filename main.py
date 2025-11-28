@@ -10,12 +10,13 @@ def show_menu():
     print("3. View Job (US3)")
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
+    print("6. Delete Job (Us6)")
     print("0. Exit")
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice (0 to 5):- ")
+    choice=input("Enter your choice ( 1 to 6):- ")
 
     #US1: Add job
     if choice=="1":
@@ -78,6 +79,16 @@ while True:
         else:
             print("\nJob not found.")
 
+    #US6 Delete job
+    elif choice=="6":
+        print("\n=> Delete Job")
+        job_id = int(input("Enter job ID to delete: "))
+
+        s1 = s.delete_job(job_id)
+        if s1:
+            print("\nJob deleted successfully!")
+        else:
+            print("\nJob not found.")
 
     elif choice=="0":
         print("Exiting...")

@@ -50,3 +50,11 @@ class JobUnitScheduler:
                 job.name = new_name
                 return True
         return False
+
+    #US6: Delete a job by ID
+    def delete_job(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                self.jobs.remove(job)
+                return True
+        return False
