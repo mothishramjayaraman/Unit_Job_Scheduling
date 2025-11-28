@@ -58,3 +58,11 @@ class JobUnitScheduler:
                 self.jobs.remove(job)
                 return True
         return False
+
+    #US7: Add a unit inside a job
+    def add_unit(self, job_id, name):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.units.append(name)
+                return True
+        return False

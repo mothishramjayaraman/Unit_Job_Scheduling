@@ -11,12 +11,13 @@ def show_menu():
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
     print("6. Delete Job (Us6)")
+    print("7. Add Unit (US7)")
     print("0. Exit")
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 6):- ")
+    choice=input("Enter your choice ( 1 to 7):- ")
 
     #US1: Add job
     if choice=="1":
@@ -89,6 +90,19 @@ while True:
             print("\nJob deleted successfully!")
         else:
             print("\nJob not found.")
+
+    #US7 Add Unit
+    elif choice=="7":
+        print("\n=> Add Job Unit")
+        job_id = int(input("Enter job ID to add unit into: "))
+        name = input("Enter unit name: ")
+
+        Done = s.add_unit(job_id, name)
+
+        if Done:
+            print("\nUnit added successfully!")
+        else:
+            print("\nJob not found. Please enter a valid Job ID.")
 
     elif choice=="0":
         print("Exiting...")
