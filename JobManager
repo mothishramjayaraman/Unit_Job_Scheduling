@@ -1,0 +1,228 @@
+from storage.JobRepo import JobRepo
+from job.description_validator import validate_descript
+from job.tags import (
+    add_tag as add_job_tag,
+    remove_tag as remove_job_tag,
+    filter_by_tag as filter_jobs_by_tag,
+)
+from job.Sorter import  PrioritySorting
+from job.clear_completed import clear_completed
+from job.unit_summary import unit_summary
+from job.timeout_handler import check_timeouts
+from job.preemption import preempting
+from job.metricsExporter import metricsExport
+from job.retry_handler import retry_handler
+
+
+class JobManager:
+    def __init__(self):
+        self.repo = JobRepo()
+        self.jobs = []
+        self.current_running_job_id = None  # used for preemption / scheduling
+
+    # -------------------------------------------------
+    # CRUD OPERATIONS
+    # -------------------------------------------------
+    def add_job(self, job):
+
+        if not validate_descript(job.description):
+            return "Description too long!"
+
+        for exist_job in self.jobs:
+            if exist_job.job_id == job.job_id:
+                return "Job id already present"
+
+        self.jobs.append(job)
+        return "Job added successfully"
+
+    def get_job(self, job_id):
+        for job_obj in self.jobs:
+            if job_obj.job_id == job_id:
+                return job_obj
+        return None
+
+    def update_job(
+        self,
+        job_id,
+        description=None,
+        priority=None,
+        max_runtime=None,
+        tags=None,
+        assigned_unit_id=None,
+        status=None,
+    ):
+        job = self.get_job(job_id)
+        if job is None:
+            return "data not found"
+
+        if description is not None:
+            job.description = description
+        if priority is not None:
+            job.priority = priority
+        if max_runtime is not None:
+            job.max_runtime = max_runtime
+        if tags is not None:
+            job.tags = tags
+        if assigned_unit_id is not None:
+            job.assigned_unit_id = assigned_unit_id
+        if status is not None:
+            job.status = status
+
+        return "Successfully updated"
+
+    def delete_job(self, job_id):
+        job_to_delete = self.get_job(job_id)
+        if job_to_delete is None:
+            return "No Job found"
+
+        self.jobs.remove(job_to_delete)
+        return True
+
+    def complete_job(self, job_id, finishedTime):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+
+        job.completeTime(finishedTime)
+        return "Job completed"
+
+    # -------------------------------------------------
+    # CLEAR COMPLETED JOBS
+    # -------------------------------------------------
+    def clear_completed_jobs(self):
+        self.jobs, removed = clear_completed(self.jobs)
+        return f"{removed} completed job(s) removed."
+
+    # -------------------------------------------------
+    # TAGS: add / remove / filter
+    # -------------------------------------------------
+    def add_tag_to_job(self, job_id, tag: str):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+
+        if add_job_tag(job, tag):
+            return f"Tag '{tag}' added to job {job_id}"
+        else:
+            return f"Invalid or duplicate tag '{tag}'"
+
+    def remove_tag_from_job(self, job_id, tag: str):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+
+        if remove_job_tag(job, tag):
+            return f"Tag '{tag}' removed from job {job_id}"
+        else:
+            return f"Tag '{tag}' not present on job {job_id}"
+
+    def get_jobs_by_tag(self, tag: str):
+        return filter_jobs_by_tag(self.jobs, tag)
+
+    # -------------------------------------------------
+    # SORT BY PRIORITY
+    # -------------------------------------------------
+    def sort_jobs_by_priority(self):
+        self.jobs = PrioritySorting(self.jobs)
+
+    # -------------------------------------------------
+    # UNIT STATUS SUMMARY
+    # -------------------------------------------------
+    def get_unit_summary(self, known_units, offline_units):
+        return unit_summary(self.jobs, known_units, offline_units)
+
+    # -------------------------------------------------
+    # TIMEOUT HANDLING
+    # -------------------------------------------------
+    def check_job_timeouts(self):
+        timed_out_jobs = check_timeouts(self.jobs)
+        return timed_out_jobs
+
+    # -------------------------------------------------
+    # PREEMPTION & SCHEDULING
+    # -------------------------------------------------
+    def schedule_job(self, job_id, current_time):
+
+        new_job = self.get_job(job_id)
+        if new_job is None:
+            return "Job not found"
+
+        if self.current_running_job_id is None:
+            new_job.startTime(current_time)
+            self.current_running_job_id = new_job.job_id
+            return f"Job {job_id} started."
+
+        running_job = self.get_job(self.current_running_job_id)
+        if running_job is None:
+            # recovery if something went wrong
+            new_job.startTime(current_time)
+            self.current_running_job_id = new_job.job_id
+            return f"Job {job_id} started."
+
+        if preempting(new_job, running_job):
+            # pause currently running job
+            running_job.status = "PAUSED"
+            # start new job
+            new_job.startTime(current_time)
+            self.current_running_job_id = new_job.job_id
+            return f"Job {job_id} preempted job {running_job.job_id} and started."
+        else:
+            return (
+                f"Job {job_id} not started; "
+                f"priority is lower or equal to running job {running_job.job_id}."
+            )
+
+    # -------------------------------------------------
+    # RETRY HANDLER (FAILURE + RETRY LIMIT)
+    # -------------------------------------------------
+    def mark_job_failed(self, job_id, failure_message: str):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+
+        result = retry_handler(job, failure_message)
+
+        if result == "RETRYING":
+            return (
+                f"Job {job_id} failed → retrying "
+                f"({job.retry_count}/{job.retry_limit})"
+            )
+
+        if result == "FAILED_PERMANENTLY":
+            return (
+                f"Job {job_id} reached retry limit "
+                f"({job.retry_count}/{job.retry_limit}) → FAILED_PERMANENTLY"
+            )
+
+        # result == "FAILED"
+        return f"Job {job_id} failed (no retry configured)."
+
+    def set_retry_limit(self, job_id, retry_limit: int):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+
+        job.retry_limit = retry_limit
+        return f"Retry limit for job {job_id} set to {retry_limit}"
+
+    # -------------------------------------------------
+    # METRICS EXPORT
+    # -------------------------------------------------
+    def export_job_metrics(self, path=None):
+        # default directory inside storage folder
+        default_path = "storage/job_metrics.csv"
+
+        if path is None:
+            path = default_path
+
+        metricsExport(self.jobs, path)
+        return f"Job metrics exported to {path}"
+
+    # -------------------------------------------------
+    # CSV PERSISTENCE
+    # -------------------------------------------------
+    def save_to_csv(self):
+        self.repo.save_jobs(self.jobs)
+
+    def load_from_csv(self):
+        self.jobs = self.repo.load_jobs()
