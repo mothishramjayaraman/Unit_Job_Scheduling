@@ -1,39 +1,50 @@
 from job_unit_scheduler import JobUnitScheduler
-s=JobUnitScheduler()
+from datetime import datetime
+
+s = JobUnitScheduler()
+
+s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
+s.add_unit(2, ['CPU', 'Storage', 'NVMe'])
+
 print("Welcome to Job Scheduler")
 
 
 def show_menu():
-    print("===Job Scheduler Menu ===)")# manage your jobs
+    print("===Job Scheduler Menu ===)")  # manage your jobs
     print("1. Add Job (US1)")
     print("2. List Jobs (US2)")
     print("3. View Job (US3)")
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
     print("6. Delete Job (Us6)")
+    print("7. Set Job Priority Label (US58)")
     print("0. Exit")
+
+
+
+
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 6):- ")
+    choice = input("Enter your choice ( 1 to 7):- ")
 
-    #US1: Add job
-    if choice=="1":
-         print("=>Add a job (US1)")
-         name = input("Enter job name: ")
-         description = input("Enter job description: ")
-         deadline = input("Enter job deadline (YYYY-MM-DD): ")
+    # US1: Add job
+    if choice == "1":
+        print("=>Add a job (US1)")
+        name = input("Enter job name: ")
+        description = input("Enter job description: ")
+        deadline = input("Enter job deadline (YYYY-MM-DD): ")
 
-         job = s.add_job(name, description, deadline)
+        job = s.add_job(name, description, deadline)
 
-         print(f"\nJob added successfully! Job ID: {job.id}")
+        print(f"\nJob added successfully! Job ID: {job.id}")
 
-    #US2: List all Jobs
-    elif choice=="2":
+    # US2: List all Jobs
+    elif choice == "2":
         print("=>List Jobs (US2)")
         jobs = s.list_jobs()
-        if len(jobs)==0:
+        if len(jobs) == 0:
             print("No jobs found.")
         else:
             for job in jobs:
@@ -41,10 +52,10 @@ while True:
                 print(f"Name: {job.name}, ")
 
 
-    #US3: View a job
-    elif choice=="3":
+    # US3: View a job
+    elif choice == "3":
         print("\n=> View Job")
-        job_id =int(input("Enter job ID to view: "))
+        job_id = int(input("Enter job ID to view: "))
 
         job = s.view_job(job_id)
         if job:
@@ -55,8 +66,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US4: Edit job description
-    elif choice=="4":
+    # US4: Edit job description
+    elif choice == "4":
         print("\n=> Edit Job Description")
         job_id = int(input("Enter job ID to edit: "))
         new_desc = input("Enter new job description: ")
@@ -67,8 +78,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US5: Rename job
-    elif choice=="5":
+    # US5: Rename job
+    elif choice == "5":
         print("\n=> Rename Job")
         job_id = int(input("Enter job ID to rename: "))
         new_name = input("Enter new job name: ")
@@ -79,8 +90,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US6 Delete job
-    elif choice=="6":
+    # US6 Delete job
+    elif choice == "6":
         print("\n=> Delete Job")
         job_id = int(input("Enter job ID to delete: "))
 
@@ -90,7 +101,29 @@ while True:
         else:
             print("\nJob not found.")
 
-    elif choice=="0":
+
+            # 1. US58: Set Job Priority Label
+    elif choice == "7":
+                print("\n--- Set Priority Label (US58) ---")
+                try:
+                    level = int(input("Enter Priority Level to change (1 to 5): "))
+                    if not (1 <= level <= 5):
+                        raise ValueError
+
+                    current_label = s.us6_get_priority_legend().get(level)
+                    new_label = input(f"Enter NEW label for Priority {level} (Current: {current_label}): ")
+
+                    if s.us6_set_priority_label(level, new_label):
+                        print(f"\n Success! Priority {level} is now labeled '{new_label}'.")
+                    else:
+                        print("Error setting label.")
+                except ValueError:
+                    print("Invalid priority level entered. Must be an integer between 1 and 5.")
+
+
+
+
+    elif choice == "0":
         print("Exiting...")
         break
     else:
