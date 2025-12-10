@@ -63,13 +63,7 @@ class JobUnitScheduler:
             5: "Background"
         }
 
-        # US7: Set to store all unique capabilities in the system
         self.system_capabilities: set = set()
-
-        # US9: Default job deadline setting (in hours)
-        self.default_deadline_hours: int = 48
-
-
     # US1: Add Job
     def add_job(self, name, description, deadline=None, priority=5):
 
@@ -143,18 +137,6 @@ class JobUnitScheduler:
             return True
         return False
 
-    # US62: List System Capabilities
-    def us7_list_capabilities(self) -> List[str]:
-
-        return sorted(list(self.system_capabilities))
-
-    # US60: Configure Default Deadline
-    def us9_set_default_deadline(self, hours: int) -> bool:
-
-        if hours > 0:
-            self.default_deadline_hours = hours
-            return True
-        return False
 
     def us6_get_priority_legend(self) -> Dict[int, str]:
 

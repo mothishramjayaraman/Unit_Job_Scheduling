@@ -17,16 +17,11 @@ def show_menu():
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
     print("6. Delete Job (Us6)")
-    print("7. Job/Unit Configuration Menu (US58/US60/US62)")
+    print("7. Set Job Priority Label (US58)")
     print("0. Exit")
 
 
-def show_config_menu():
-    print("\n--- Configuration & Creation Menu (Option 6) ---")
-    print("1. Set Job Priority Label (US58)")
-    print("2. List System Capabilities (US62)")
-    print("3. Configure Default Deadline (US60)")
-    print("0. Back to Main Menu")
+
 
 
 while True:
@@ -106,13 +101,9 @@ while True:
         else:
             print("\nJob not found.")
 
-    # US58/US60/US62 Configuration Menu
-    elif choice == "7":
-        while True:
-            show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-3):- ")
+
             # 1. US58: Set Job Priority Label
-            if config_choice == "1":
+    elif choice == "7":
                 print("\n--- Set Priority Label (US58) ---")
                 try:
                     level = int(input("Enter Priority Level to change (1 to 5): "))
@@ -129,37 +120,7 @@ while True:
                 except ValueError:
                     print("Invalid priority level entered. Must be an integer between 1 and 5.")
 
-            # 2. US62: List System Capabilities
-            elif config_choice == "2":
 
-                capabilities = s.us7_list_capabilities()
-                print("\n--- System Capabilities (US62) ---")
-                if capabilities:
-                    for cap in capabilities:
-                        print(f"- {cap}")
-                else:
-                    print("No units added, so no capabilities defined.")
-            # 3. US60: Configure Default Deadline
-            elif config_choice == "3":
-
-                print(f"\n--- Configure Default Deadline (US60) ---")
-                print(f"Current Default Deadline: {s.default_deadline_hours} hours.")
-                try:
-                    new_hours = int(input("Enter NEW default hours for job deadlines (e.g., 24, 72): "))
-
-                    if s.us9_set_default_deadline(new_hours):
-                        print(f"\n Success! New default deadline set to {new_hours} hours.")
-                    else:
-                        print("Error: Deadline must be a positive number of hours.")
-                except ValueError:
-                    print("Invalid input. Please enter a whole number.")
-
-
-            # 0. Back to Main Menu
-            elif config_choice == "0":
-                break
-            else:
-                print("Invalid choice. Please try again.")
 
 
     elif choice == "0":
