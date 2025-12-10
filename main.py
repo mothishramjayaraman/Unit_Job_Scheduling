@@ -1,10 +1,16 @@
 from job_unit_scheduler import JobUnitScheduler
-s=JobUnitScheduler()
+from datetime import datetime
+
+s = JobUnitScheduler()
+
+s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
+s.add_unit(2, ['CPU', 'Storage', 'NVMe'])
+
 print("Welcome to Job Scheduler")
 
 
 def show_menu():
-    print("===Job Scheduler Menu ===)")# manage your jobs
+    print("===Job Scheduler Menu ===)")  # manage your jobs
     print("1. Add Job (US1)")
     print("2. List Jobs (US2)")
     print("3. View Job (US3)")
@@ -15,27 +21,31 @@ def show_menu():
     print("8. View Units (US8)")
     print("0. Exit")
 
+
+
+
+
 while True:
     show_menu()
     print("\n")
     choice=input("Enter your choice ( 1 to 7):- ")
 
-    #US1: Add job
-    if choice=="1":
-         print("=>Add a job (US1)")
-         name = input("Enter job name: ")
-         description = input("Enter job description: ")
-         deadline = input("Enter job deadline (YYYY-MM-DD): ")
+    # US1: Add job
+    if choice == "1":
+        print("=>Add a job (US1)")
+        name = input("Enter job name: ")
+        description = input("Enter job description: ")
+        deadline = input("Enter job deadline (YYYY-MM-DD): ")
 
-         job = s.add_job(name, description, deadline)
+        job = s.add_job(name, description, deadline)
 
-         print(f"\nJob added successfully! Job ID: {job.id}")
+        print(f"\nJob added successfully! Job ID: {job.id}")
 
-    #US2: List all Jobs
-    elif choice=="2":
+    # US2: List all Jobs
+    elif choice == "2":
         print("=>List Jobs (US2)")
         jobs = s.list_jobs()
-        if len(jobs)==0:
+        if len(jobs) == 0:
             print("No jobs found.")
         else:
             for job in jobs:
@@ -43,10 +53,10 @@ while True:
                 print(f"Name: {job.name}, ")
 
 
-    #US3: View a job
-    elif choice=="3":
+    # US3: View a job
+    elif choice == "3":
         print("\n=> View Job")
-        job_id =int(input("Enter job ID to view: "))
+        job_id = int(input("Enter job ID to view: "))
 
         job = s.view_job(job_id)
         if job:
@@ -57,8 +67,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US4: Edit job description
-    elif choice=="4":
+    # US4: Edit job description
+    elif choice == "4":
         print("\n=> Edit Job Description")
         job_id = int(input("Enter job ID to edit: "))
         new_desc = input("Enter new job description: ")
@@ -69,8 +79,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US5: Rename job
-    elif choice=="5":
+    # US5: Rename job
+    elif choice == "5":
         print("\n=> Rename Job")
         job_id = int(input("Enter job ID to rename: "))
         new_name = input("Enter new job name: ")
@@ -81,8 +91,8 @@ while True:
         else:
             print("\nJob not found.")
 
-    #US6 Delete job
-    elif choice=="6":
+    # US6 Delete job
+    elif choice == "6":
         print("\n=> Delete Job")
         job_id = int(input("Enter job ID to delete: "))
 
