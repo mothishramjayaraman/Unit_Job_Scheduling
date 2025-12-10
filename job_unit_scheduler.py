@@ -119,25 +119,17 @@ class JobUnitScheduler:
                 return True
         return False
 
-
-
-
-    def add_unit(self, unit_id, capabilities: List[str]):
-
-        unit = Unit(unit_id, capabilities)
-        self.units.append(unit)
-        self.system_capabilities.update(capabilities)  # US7 update
-        return unit
-
-    # US59: Set Job Priority Labels
-    def us6_set_priority_label(self, priority_level: int, label: str) -> bool:
-
-        if 1 <= priority_level <= 5:
-            self.priority_labels[priority_level] = label
-            return True
+    #US7: Add a unit inside a job
+    def add_unit(self, job_id, name):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.units.append(name)
+                return True
         return False
 
-
-    def us6_get_priority_legend(self) -> Dict[int, str]:
-
-        return self.priority_labels
+    #US8: View units by Job ID
+    def view_units(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                return job.units # return the list of units
+        return None #job not found

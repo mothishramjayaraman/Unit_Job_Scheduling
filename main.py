@@ -17,7 +17,8 @@ def show_menu():
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
     print("6. Delete Job (Us6)")
-    print("7. Set Job Priority Label (US58)")
+    print("7. Add Unit (US7)")
+    print("8. View Units (US8)")
     print("0. Exit")
 
 
@@ -27,7 +28,7 @@ def show_menu():
 while True:
     show_menu()
     print("\n")
-    choice = input("Enter your choice ( 1 to 7):- ")
+    choice=input("Enter your choice ( 1 to 7):- ")
 
     # US1: Add job
     if choice == "1":
@@ -101,29 +102,35 @@ while True:
         else:
             print("\nJob not found.")
 
+    #US7 Add Unit
+    elif choice=="7":
+        print("\n=> Add Job Unit")
+        job_id = int(input("Enter job ID to add unit into: "))
+        name = input("Enter unit name: ")
 
-            # 1. US58: Set Job Priority Label
-    elif choice == "7":
-                print("\n--- Set Priority Label (US58) ---")
-                try:
-                    level = int(input("Enter Priority Level to change (1 to 5): "))
-                    if not (1 <= level <= 5):
-                        raise ValueError
+        Done = s.add_unit(job_id, name)
 
-                    current_label = s.us6_get_priority_legend().get(level)
-                    new_label = input(f"Enter NEW label for Priority {level} (Current: {current_label}): ")
+        if Done:
+            print("\nUnit added successfully!")
+        else:
+            print("\nJob not found. Please enter a valid Job ID.")
 
-                    if s.us6_set_priority_label(level, new_label):
-                        print(f"\n Success! Priority {level} is now labeled '{new_label}'.")
-                    else:
-                        print("Error setting label.")
-                except ValueError:
-                    print("Invalid priority level entered. Must be an integer between 1 and 5.")
+    # US8: View Units
+    elif choice == "8":
+        print("\n=> View Units")
+        job_id = int(input("Enter job ID to view units: "))
+        units = s.view_units(job_id)
+        if units is None:
+            print("\nJob not found.")
+        else:
+            if len(units) == 0:
+                print("\nNo units added yet.")
+            else:
+                print("\nUnits for this job are: ")
+                for unit in units:
+                    print(f"\t-,{unit}")
 
-
-
-
-    elif choice == "0":
+    elif choice=="0":
         print("Exiting...")
         break
     else:
