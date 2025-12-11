@@ -62,12 +62,14 @@ class JobUnitScheduler:
             4: "Low",
             5: "Background"
         }
-
+        self.Des_length=100
         self.system_capabilities: set = set()
     # US1: Add Job
     def add_job(self, name, description, deadline=None, priority=5):
 
-
+        # US Description Validation (if characters exceed >= 100)
+        if len(description) > self.Des_length:
+            return "Description too long!"
         # US9 Deadline Handling (if called without a deadline)
         if deadline is None:
 
