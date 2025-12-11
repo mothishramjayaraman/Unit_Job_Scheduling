@@ -69,7 +69,7 @@ class JobUnitScheduler:
 
         # US Description Validation (if characters exceed >= 100)
         if len(description) > self.Des_length:
-            return "Description too long!"
+            return "Description too long! Try to add fewer than 100 characters"
         # US9 Deadline Handling (if called without a deadline)
         if deadline is None:
 
