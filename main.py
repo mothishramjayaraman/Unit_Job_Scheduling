@@ -38,7 +38,10 @@ while True:
         deadline = input("Enter job deadline (YYYY-MM-DD): ")
 
         job = s.add_job(name, description, deadline)
-
+        # US16: Shows Description too long without crash
+        if isinstance(job, str):
+            print("\n" + job)
+            continue
         print(f"\nJob added successfully! Job ID: {job.id}")
 
     # US2: List all Jobs
