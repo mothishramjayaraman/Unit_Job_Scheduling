@@ -19,6 +19,7 @@ def show_menu():
     print("6. Delete Job (Us6)")
     print("7. Add Unit (US7)")
     print("8. View Units (US8)")
+    print("9. Complete Job (US9)")
     print("0. Exit")
 
 
@@ -133,6 +134,17 @@ while True:
                 for unit in units:
                     print(f"\t-,{unit}")
 
+    #US9: Complete Job
+    elif choice=="9":
+        print("\n=> Complete Job")
+        job_id = int(input("Enter job ID to complete: "))
+        unit = s.complete_job(job_id)
+        if unit:
+            print("\nJob marked as completed!")
+        else:
+            print("\nJob not found.")
+
+    # Exit from menu
     elif choice=="0":
         print("Exiting...")
         break
