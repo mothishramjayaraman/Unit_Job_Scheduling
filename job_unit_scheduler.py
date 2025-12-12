@@ -141,3 +141,11 @@ class JobUnitScheduler:
     def us6_get_priority_legend(self) -> Dict[int, str]:
 
         return self.priority_labels
+
+    # US55: View Unit History
+    def us4_view_unit_history(self, unit_id: int) -> List[float]:
+        """Returns the list of historical load values for a specific unit."""
+        for unit in self.units:
+            if unit.id == unit_id:
+                return unit.historical_loads
+        return []

@@ -4,7 +4,11 @@ from datetime import datetime
 s = JobUnitScheduler()
 
 s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
+s.units[0].load = 80.0
+s.units[0].historical_loads = [60.0, 70.0, 80.0]
 s.add_unit(2, ['CPU', 'Storage', 'NVMe'])
+s.units[1].load = 15.0
+s.units[1].historical_loads = [10.0, 15.0]
 
 print("Welcome to Job Scheduler")
 
@@ -17,7 +21,8 @@ def show_menu():
     print("4. Edit Job Description (US4)")
     print("5. Rename Job (Us5)")
     print("6. Delete Job (Us6)")
-    print("7. Set Job Priority Label (US58)")
+    print("7. Set Job Priority Label(US58)")
+    print("8. View Unit History(US55)")
     print("0. Exit")
 
 
@@ -27,7 +32,7 @@ def show_menu():
 while True:
     show_menu()
     print("\n")
-    choice = input("Enter your choice ( 1 to 7):- ")
+    choice = input("Enter your choice ( 1 to 8):- ")
 
     # US1: Add job
     if choice == "1":
@@ -102,7 +107,7 @@ while True:
             print("\nJob not found.")
 
 
-            # 1. US58: Set Job Priority Label
+    # US58: Set Job Priority Label
     elif choice == "7":
                 print("\n--- Set Priority Label (US58) ---")
                 try:
@@ -119,6 +124,27 @@ while True:
                         print("Error setting label.")
                 except ValueError:
                     print("Invalid priority level entered. Must be an integer between 1 and 5.")
+
+    # US55: View Unit History
+    elif choice == "8":
+        print("\n=> View Unit History")
+        try:
+            unit_id = int(input("Enter Unit ID (e.g., 1 or 2) to view history: "))
+
+            # Call the US4 method added to your scheduler
+            history = s.us4_view_unit_history(unit_id)
+
+            if history:
+                print(f"\n--- History for Unit {unit_id} ---")
+                print(f"Total entries: {len(history)}")
+                print(f"Load History: {history}")
+            else:
+                print(f"Unit {unit_id} not found or history is empty.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+        except AttributeError:
+            # Catch if the setup or method definition was skipped
+            print("Error: The us4_view_unit_history method is not fully implemented in the scheduler.")
 
 
 
