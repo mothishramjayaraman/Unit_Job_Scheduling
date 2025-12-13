@@ -1,5 +1,6 @@
 class Job:
     def __init__(self, job_id, name, description, deadline):
+        # Add new job object
         self.id = job_id
         self.name = name
         self.description = description
