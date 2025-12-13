@@ -24,6 +24,7 @@ All features are implemented in accordance with the defined user stories (US1- U
 ---
 
 ## 3.User Story Trackable 
+
 Each user story is apply in the core system and validated according with unit test
 
 | User Story   |   Description          | Implementation               |   Test Case
@@ -60,6 +61,7 @@ Steps:
 
 ## 6.How to Run UnitTests
 Unittests are written to verify the behaviour of all executed user stories.
+
 Steps:
     1. Open terminal in the project directory
     2. Run the test file using: pythin test_job_unit_scheduler.py
