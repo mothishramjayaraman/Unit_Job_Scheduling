@@ -21,7 +21,7 @@ class Unit:
 
 
 class Job:
-    def __init__(self, job_id, name, description, deadline):
+    def __init__(self, job_id, name, description, deadline,priority=5):
         # Add new job object
         self.id = job_id
         self.name = name
@@ -141,3 +141,15 @@ class JobUnitScheduler:
                 job.complete = True
                 return True  # job marked completed
         return False  # job not found
+
+    # US18: Clear completed jobs
+    def remove_completed_jobs(self):
+        prev = len(self.jobs)
+        current_job = []
+        for job in self.jobs:
+            if not job.complete:
+                current_job.append(job)
+        self.jobs = current_job
+        erased = prev - len(self.jobs)
+
+        return f"{erased} completed job(s) removed."
