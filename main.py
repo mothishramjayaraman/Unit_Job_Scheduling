@@ -20,16 +20,14 @@ def show_menu():
     print("7. Add Unit (US7)")
     print("8. View Units (US8)")
     print("9. Complete Job (US9)")
+    print("10. Clear Completed Jobs (US18)")
     print("0. Exit")
-
-
-
 
 
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 7):- ")
+    choice=input("Enter your choice ( 1 to 10):- ")
 
     # US1: Add job
     if choice == "1":
@@ -144,10 +142,23 @@ while True:
         else:
             print("\nJob not found.")
 
+    # US18: Clear completed Job
+    elif choice == "10":
+        print("\n=== Clear Completed Jobs ===")
+        info = s.remove_completed_jobs()
+        print(info)
+
+    # US18: Clear completed Job
+    elif choice == "10":
+        print("\n=== Clear Completed Jobs ===")
+        info = s.remove_completed_jobs()
+        print(info)
+
     # Exit from menu
-    elif choice=="0":
+    elif choice == "0":
         print("Exiting...")
         break
+
     else:
         print("Invalid choice. Please try again.")
 
