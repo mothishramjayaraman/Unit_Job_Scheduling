@@ -148,12 +148,6 @@ while True:
         info = s.remove_completed_jobs()
         print(info)
 
-    # US18: Clear completed Job
-    elif choice == "10":
-        print("\n=== Clear Completed Jobs ===")
-        info = s.remove_completed_jobs()
-        print(info)
-
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
