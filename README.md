@@ -64,7 +64,7 @@ Unittests are written to verify the behaviour of all executed user stories.
 
 Steps:
     1. Open terminal in the project directory
-    2. Run the test file using: pythin test_job_unit_scheduler.py
+    2. Run the test file using: python test_job_unit_scheduler.py
     3. If all tests pass, the process will end with exit code 0.
 
 ## 7.Testing Approach
