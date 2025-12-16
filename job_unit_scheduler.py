@@ -5,9 +5,7 @@ from typing import List, Dict, Optional
 import time
 
 
-
 class Unit:
-
 
     def __init__(self, unit_id: int, capabilities: List[str]):
         self.id = unit_id
@@ -18,13 +16,9 @@ class Unit:
         return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)}"
 
 
-
-
 class Job:
-
-
-
-    def __init__(self, job_id, name, description, deadline, priority: int = 5):
+    def __init__(self, job_id, name, description, deadline, priority=5):
+        # Add new job object
         self.id = job_id
         self.name = name
         self.description = description
@@ -32,25 +26,20 @@ class Job:
         self.units = []
         self.complete = False
 
-
         self.priority = priority
 
     def __str__(self):
-
         status = "Completed" if self.complete else "Pending"
 
         return f"[{self.id}] {self.name} (P{self.priority}) | Status: {status}"
 
 
-
 class JobUnitScheduler:
-
 
     def __init__(self):
 
         self.jobs: List[Job] = []
         self.next_id = 1
-
 
         self.units: List[Unit] = []
 
@@ -62,12 +51,15 @@ class JobUnitScheduler:
             4: "Low",
             5: "Background"
         }
-
+        self.Des_length = 100
         self.system_capabilities: set = set()
+
     # US1: Add Job
     def add_job(self, name, description, deadline=None, priority=5):
 
-
+        # US Description Validation (if characters exceed >= 100)
+        if len(description) > self.Des_length:
+            return "Description too long! Try to add fewer than 100 characters"
         # US9 Deadline Handling (if called without a deadline)
         if deadline is None:
 
@@ -76,7 +68,6 @@ class JobUnitScheduler:
         else:
 
             deadline_dt = deadline
-
 
         job = Job(self.next_id, name, description, deadline_dt, priority)
         self.jobs.append(job)
@@ -119,8 +110,40 @@ class JobUnitScheduler:
                 return True
         return False
 
+    # US7: Add a unit inside a job
+    def add_unit(self, job_id, name):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.units.append(name)
+                return True
+        return False
 
+    # US8: View units by Job ID
+    def view_units(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                return job.units  # return the list of units
+        return None  # job not found
 
+    # US9: Complete a job
+    def complete_job(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                job.complete = True
+                return True  # job marked completed
+        return False  # job not found
+
+    # US18: Clear completed jobs
+    def remove_completed_jobs(self):
+        prev = len(self.jobs)
+        current_job = []
+        for job in self.jobs:
+            if not job.complete:
+                current_job.append(job)
+        self.jobs = current_job
+        erased = prev - len(self.jobs)
+
+        return f"{erased} completed job(s) removed."
 
     def add_unit(self, unit_id, capabilities: List[str]):
 
@@ -136,7 +159,6 @@ class JobUnitScheduler:
             self.priority_labels[priority_level] = label
             return True
         return False
-
 
     def us6_get_priority_legend(self) -> Dict[int, str]:
 
