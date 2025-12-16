@@ -33,6 +33,7 @@ def show_config_menu():
     print("\n--- Configuration & Creation Menu (Option 11) ---")
     print("1. Set Job Priority Label (US58)")
     print("2. View Unit Load History(US55)")
+    print("3. View Job Priority Legend(US57)")
     print("0. Back to Main Menu")
 while True:
     show_menu()
@@ -162,7 +163,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-2):- ")
+            config_choice = input("\nEnter your configuration choice (1-3):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -187,7 +188,7 @@ while True:
                 try:
                     unit_id = int(input("Enter Unit ID (e.g., 1 or 2) to view history: "))
 
-                    # Call the US4 method added to your scheduler
+                    # Call the US method added to your scheduler
                     history = s.us4_view_unit_history(unit_id)
 
                     if history:
@@ -200,8 +201,17 @@ while True:
                     print("Invalid input. Please enter a number.")
                 except AttributeError:
                     # Catch if the setup or method definition was skipped
-                    print("Error: The us4_view_unit_history method is not fully implemented in the scheduler.")
+                    print("Error: The us55_view_unit_history method is not fully implemented in the scheduler.")
 
+            # US57: View Job Priority Legend
+            elif config_choice == "3":
+                print("\n--- Job Priority Legend (US57) ---")
+                # Call the method from the scheduler
+                legend = s.us11_get_priority_legend()
+
+                # Iterate through the dictionary to display the pairs
+                for level, label in sorted(legend.items()):
+                    print(f"Priority P{level}: {label}")
         # 0. Back to Main Menu
             elif config_choice == "0":
                  break
@@ -215,4 +225,3 @@ while True:
     else:
         print("Invalid choice. Please try again.")
 
-    #US
