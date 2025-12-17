@@ -27,6 +27,7 @@ def show_menu():
     print("9. Complete Job (US9)")
     print("10. Clear Completed Jobs (US18)")
     print("11. Job/Unit Configuration Menu (US58/US55)")
+    print("12. Tag Job with description(Add/Remove/Filter)(US20)")
     print("0. Exit")
 
 def show_config_menu():
@@ -38,7 +39,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 11):- ")
+    choice=input("Enter your choice ( 1 to 12):- ")
 
     # US1: Add job
     if choice == "1":
@@ -217,6 +218,47 @@ while True:
                  break
             else:
                 print("Invalid choice. Please try again.")
+
+    # US20:Tag job with categories(add/remove/filter)
+    elif choice == "12":
+        print("\n=> Tag Job With Categories (US20)")
+        print("1. Add Tag")
+        print("2. Remove Tag")
+        print("3. Filter Jobs by Tag")
+        print("0. Back to Main Menu")
+
+        sub_choice = input("Enter your choice: ")
+        if sub_choice == "1":
+            print("\n Tags List:")
+            for tag_item in s.TAGS_CONTAINER:
+                print(f"- {tag_item}")
+            jobId = int(input("Enter job ID: "))
+            tag_name = input("Enter tag to add: ").lower()
+            currentJob = s.add_jobtag(jobId, tag_name)
+            print(currentJob)
+
+        elif sub_choice == "2":
+            job_id = int(input("Enter job ID: "))
+            tag = input("Enter tag to remove: ")
+            currentJob = s.remove_jobtag(job_id, tag)
+            print(currentJob)
+
+        elif sub_choice == "3":
+            tag = input("Enter tag to filter jobs: ")
+            jobs = s.filter_jobtag(tag)
+
+            if not jobs:
+                print("Give correct tag .")
+            else:
+                print("\nJobs with tag:", tag)
+                for job in jobs:
+                    print(f"- [{job.id}] {job.name}")
+
+        elif sub_choice == "0":
+            pass  # menu
+
+        else:
+            print("Invalid sub choice.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
