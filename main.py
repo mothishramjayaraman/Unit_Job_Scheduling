@@ -26,7 +26,7 @@ def show_menu():
     print("8. View Units (US8)")
     print("9. Complete Job (US9)")
     print("10. Clear Completed Jobs (US18)")
-    print("11. Job/Unit Configuration Menu (US58/US55)")
+    print("11. Job/Unit Configuration Menu")
     print("12. Tag Job with description(Add/Remove/Filter)(US20)")
     print("0. Exit")
 
@@ -35,6 +35,7 @@ def show_config_menu():
     print("1. Set Job Priority Label (US58)")
     print("2. View Unit Load History(US55)")
     print("3. View Job Priority Legend(US57)")
+    print("4. Reset Unit Load History (US61)")
     print("0. Back to Main Menu")
 while True:
     show_menu()
@@ -164,7 +165,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-3):- ")
+            config_choice = input("\nEnter your configuration choice (1-4):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -185,11 +186,11 @@ while True:
 
             # US55: View Unit History
             elif config_choice == "2":
-                print("\n=> View Unit History")
+                print("\n=> View Unit History(US55)")
                 try:
                     unit_id = int(input("Enter Unit ID (e.g., 1 or 2) to view history: "))
 
-                    # Call the US method added to your scheduler
+
                     history = s.us4_view_unit_history(unit_id)
 
                     if history:
@@ -201,18 +202,27 @@ while True:
                 except ValueError:
                     print("Invalid input. Please enter a number.")
                 except AttributeError:
-                    # Catch if the setup or method definition was skipped
-                    print("Error: The us55_view_unit_history method is not fully implemented in the scheduler.")
 
+                    print("Error: The view_unit_history method is not fully implemented in the scheduler.")
             # US57: View Job Priority Legend
             elif config_choice == "3":
                 print("\n--- Job Priority Legend (US57) ---")
-                # Call the method from the scheduler
-                legend = s.us11_get_priority_legend()
-
-                # Iterate through the dictionary to display the pairs
+                legend = s.us57_get_priority_legend()
                 for level, label in sorted(legend.items()):
                     print(f"Priority P{level}: {label}")
+            # US61: Reset Unit Load History
+            elif config_choice == "4":
+                print("\n--- Reset Unit History (US61) ---")
+                try:
+                    u_id = int(input("Enter Unit ID to reset history: "))
+                    if s.us61_reset_unit_history(u_id):
+                            print(f"Success! Performance metrics for Unit {u_id} have been cleared.")
+                    else:
+                            print(" Error: Unit ID not found in the system.")
+                except ValueError:
+                        print("Invalid input. Please enter a numerical Unit ID.")
+
+
         # 0. Back to Main Menu
             elif config_choice == "0":
                  break

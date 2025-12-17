@@ -149,7 +149,7 @@ class JobUnitScheduler:
 
         unit = Unit(unit_id, capabilities)
         self.units.append(unit)
-        self.system_capabilities.update(capabilities)  # US7 update
+        self.system_capabilities.update(capabilities)
         return unit
 
     # US59: Set Job Priority Labels
@@ -210,7 +210,17 @@ class JobUnitScheduler:
         tag = tag.lower()
         return [job for job in self.jobs if tag in job.tags]
 
-    # US11: View Job Priority Legend
-    def us11_get_priority_legend(self) -> Dict[int, str]:
+    # US57: View Job Priority Legend
+    def us57_get_priority_legend(self) -> Dict[int, str]:
 
          return self.priority_labels
+
+    # US61: Reset Unit Load History
+    def us61_reset_unit_history(self, unit_id: int) -> bool:
+
+        for unit in self.units:
+            if unit.id == unit_id:
+                current_val = getattr(unit, 'load', 0.0)
+                unit.historical_loads = [current_val]
+                return True
+        return False
