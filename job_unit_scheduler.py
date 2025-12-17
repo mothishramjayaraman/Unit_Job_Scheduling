@@ -25,7 +25,7 @@ class Job:
         self.deadline = deadline
         self.units = []
         self.complete = False
-
+        self.tags= []
         self.priority = priority
 
     def __str__(self):
@@ -171,6 +171,44 @@ class JobUnitScheduler:
             if unit.id == unit_id:
                 return unit.historical_loads
         return []
+
+    # US20 Get job for Tag management
+    def get_job(self, job_id):
+        for job in self.jobs:
+            if job.id == job_id:
+                return job
+        return None
+
+    # US20 Tag job(add)
+    TAGS_CONTAINER = {"system", "user", "batch", "maintenance"}
+
+    def add_jobtag(self, job_id, tag: str):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+        tag = tag.lower()
+        if tag not in self.TAGS_CONTAINER:
+            return "Wrong tag"
+        if tag in job.tags:
+            return "Tag already exists"
+        job.tags.append(tag)
+        return f"Tag '{tag}' added to job {job_id}"
+
+    # US20 Tag job(remove)
+    def remove_jobtag(self, job_id, tag: str):
+        job = self.get_job(job_id)
+        if job is None:
+            return "Job not found"
+        tag = tag.lower()
+        if tag not in job.tags:
+            return f"Tag '{tag}' not present on job {job_id}"
+        job.tags.remove(tag)
+        return f"Tag '{tag}' removed from job {job_id}"
+
+    # US20 Tag job(filter)
+    def filter_jobtag(self, tag: str):
+        tag = tag.lower()
+        return [job for job in self.jobs if tag in job.tags]
 
     # US11: View Job Priority Legend
     def us11_get_priority_legend(self) -> Dict[int, str]:
