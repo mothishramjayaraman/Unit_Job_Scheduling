@@ -7,17 +7,20 @@ import time
 
 class Unit:
 
-    def __init__(self, unit_id: int, capabilities: List[str]):
+    def __init__(self, unit_id: int, capabilities: List[str], max_capacity: float = 100.0):
         self.id = unit_id
-
         self.capabilities = capabilities
+        # US43: Capacity management attributes
+        self.max_capacity = max_capacity
+        self.current_load = 0.0
+        self.historical_loads = []
 
     def __str__(self):
         return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)}"
 
 
 class Job:
-    def __init__(self, job_id, name, description, deadline, priority=5):
+    def __init__(self, job_id, name, description, deadline, priority=5, required_capacity=10.0):
         # Add new job object
         self.id = job_id
         self.name = name
@@ -27,6 +30,8 @@ class Job:
         self.complete = False
         self.tags= []
         self.priority = priority
+        # US43: Requirement for validation
+        self.required_capacity = required_capacity
 
     def __str__(self):
         status = "Completed" if self.complete else "Pending"
@@ -55,7 +60,7 @@ class JobUnitScheduler:
         self.system_capabilities: set = set()
 
     # US1: Add Job
-    def add_job(self, name, description, deadline=None, priority=5):
+    def add_job(self, name, description, deadline=None, priority=5, required_capacity=10.0):
 
         # US Description Validation (if characters exceed >= 100)
         if len(description) > self.Des_length:
@@ -65,6 +70,10 @@ class JobUnitScheduler:
 
             deadline_dt = datetime.now() + timedelta(hours=self.default_deadline_hours)
             print(f"(Applying US9 default deadline: {self.default_deadline_hours} hours.)")
+            job = Job(self.next_id, name, description, deadline_dt, priority, required_capacity)
+            self.jobs.append(job)
+            self.next_id += 1
+            return job
         else:
 
             deadline_dt = deadline
@@ -224,3 +233,21 @@ class JobUnitScheduler:
                 unit.historical_loads = [current_val]
                 return True
         return False
+
+    # US43: Unit Capacity Validation
+    def us43_validate_and_assign(self, job_id: int, unit_id: int) -> str:
+        job = self.view_job(job_id)
+
+        unit = next((u for u in self.units if u.id == unit_id), None)
+
+        if not job:
+            return "Error: Job not found."
+        if not unit:
+            return "Error: Unit not found."
+        if (unit.current_load + job.required_capacity) <= unit.max_capacity:
+            unit.current_load += job.required_capacity
+            job.units.append(f"Unit {unit_id}")
+            return f"Success! Job {job_id} assigned. Unit {unit_id} load: {unit.current_load}/{unit.max_capacity}"
+        else:
+            remaining = unit.max_capacity - unit.current_load
+            return f"Rejected: Job needs {job.required_capacity}, but Unit only has {remaining} capacity."

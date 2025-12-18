@@ -12,8 +12,6 @@ s.units[1].historical_loads = [10.0, 15.0]
 
 print("Welcome to Job Scheduler")
 
-
-
 def show_menu():
     print("===Job Scheduler Menu ===)")  # manage your jobs
     print("1. Add Job (US1)")
@@ -28,6 +26,7 @@ def show_menu():
     print("10. Clear Completed Jobs (US18)")
     print("11. Job/Unit Configuration Menu")
     print("12. Tag Job with description(Add/Remove/Filter)(US20)")
+    print("13. Unit Capacity Validation(US43)")
     print("0. Exit")
 
 def show_config_menu():
@@ -40,7 +39,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 12):- ")
+    choice=input("Enter your choice ( 1 to 13):- ")
 
     # US1: Add job
     if choice == "1":
@@ -48,8 +47,11 @@ while True:
         name = input("Enter job name: ")
         description = input("Enter job description: ")
         deadline = input("Enter job deadline (YYYY-MM-DD): ")
-
-        job = s.add_job(name, description, deadline)
+        try:
+            req_cap = float(input("Enter capacity required for this job (default 10.0): ") or 10.0)
+        except ValueError:
+            req_cap = 10.0
+        job = s.add_job(name, description, deadline, required_capacity=req_cap)
         # US16: Shows Description too long without crash
         if isinstance(job, str):
             print("\n" + job)
@@ -269,6 +271,17 @@ while True:
 
         else:
             print("Invalid sub choice.")
+    # US43: Unit Capacity Validation
+    elif choice == "13":
+        print("\n=> Assign Job with Capacity Validation (US43)")
+        try:
+            job_id_input = int(input("Enter Job ID: "))
+            unit_id_input = int(input("Enter Unit ID: "))
+            result = s.us43_validate_and_assign(job_id_input, unit_id_input)
+            print(f"\nValidation Result: {result}")
+
+        except ValueError:
+            print("Invalid input. Please enter numerical IDs for Job and Unit.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
