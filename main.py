@@ -164,8 +164,22 @@ while True:
     # US18: Clear completed Job
     elif choice == "10":
         print("\n=== Clear Completed Jobs ===")
+        completed_jobs = [job for job in s.jobs if job.complete]
         info = s.remove_completed_jobs()
         print(info)
+
+        if completed_jobs:
+            print("\nRemoved Completed Jobs:")
+            for job in completed_jobs:
+                print("--------------------------------")
+                print(f"Job ID      : {job.id}")
+                print(f"Name        : {job.name}")
+                print(f"Description : {job.description}")
+                print(f"Priority    : {job.priority}")
+                print(f"Deadline    : {job.deadline}")
+                print(f"Tags        : {job.tags}")
+        else:
+            print("No completed jobs to remove.")
 
     # US58/US55 Configuration Menu
     elif choice == "11":
@@ -250,26 +264,43 @@ while True:
                 print(f"- {tag_item}")
             jobId = int(input("Enter job ID: "))
             tag_name = input("Enter tag to add: ").lower()
-            currentJob = s.add_jobtag(jobId, tag_name)
-            print(currentJob)
+            result = s.add_jobtag(jobId, tag_name)
+            print(result)
+            job = s.get_job(jobId)
+            if job:
+                print("--------------------------------")
+                print(f"Job ID      : {job.id}")
+                print(f"Name        : {job.name}")
+                print(f"Description : {job.description}")
+                print(f"Priority    : {job.priority}")
+                print(f"Deadline    : {job.deadline}")
+                print(f"Tags        : {job.tags}")
+                print(f"Completed   : {job.complete}")
 
+        #Remove tag
         elif sub_choice == "2":
             job_id = int(input("Enter job ID: "))
             tag = input("Enter tag to remove: ")
             currentJob = s.remove_jobtag(job_id, tag)
             print(currentJob)
 
+        #Filter tag
         elif sub_choice == "3":
             tag = input("Enter tag to filter jobs: ")
             jobs = s.filter_jobtag(tag)
-
             if not jobs:
-                print("Give correct tag .")
+                print("Give correct tag.")
             else:
-                print("\nJobs with tag:", tag)
+                print(f"\nJobs with tag: {tag}")
                 for job in jobs:
-                    print(f"- [{job.id}] {job.name}")
-
+                    print("--------------------------------")
+                    print(f"Job ID      : {job.id}")
+                    print(f"Name        : {job.name}")
+                    print(f"Description : {job.description}")
+                    print(f"Priority    : {job.priority}")
+                    print(f"Deadline    : {job.deadline}")
+                    print(f"Tags        : {job.tags}")
+                    print(f"Completed   : {job.complete}")
         elif sub_choice == "0":
             pass  # menu
 
