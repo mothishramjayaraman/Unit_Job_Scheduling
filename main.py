@@ -28,6 +28,7 @@ def show_menu():
     print("12. Tag Job with description(Add/Remove/Filter)(US20)")
     print("13. Unit Capacity Validation(US43)")
     print("14. Job Retry Mechanism(US44)")
+    print("15. View Unit Error Logs (US46)")
     print("0. Exit")
 
 def show_config_menu():
@@ -40,7 +41,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 14):- ")
+    choice=input("Enter your choice ( 1 to 15):- ")
 
     # US1: Add job
     if choice == "1":
@@ -285,6 +286,7 @@ while True:
 
         except ValueError:
             print("Invalid input. Please enter numerical IDs for Job and Unit.")
+
     # US44: Job Retry Mechanism
     elif choice == "14":
         print("\n=> Report Job Failure & Retry (US44)")
@@ -294,6 +296,21 @@ while True:
             print(f"\nSystem Action: {result}")
         except ValueError:
             print("Invalid input. Please enter a numerical Job ID.")
+    # US46: Unit-Level Error Log Viewer
+    elif choice == "15":
+            print("\n=> View Unit Error Logs (US46)")
+            try:
+                unit_id_input = int(input("Enter Unit ID to view logs: "))
+                logs = s.get_unit_error_logs(unit_id_input)
+
+                if not logs:
+                    print(f"No error logs found for Unit {unit_id_input}.")
+                else:
+                    print(f"\n--- Error Logs for Unit {unit_id_input} ---")
+                    for log in logs:
+                        print(log)
+            except ValueError:
+                print("Invalid input. Please enter a numerical Unit ID.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")

@@ -14,9 +14,12 @@ class Unit:
         self.max_capacity = max_capacity
         self.current_load = 0.0
         self.historical_loads = []
+        # US46: Unit-level error logs storage
+        self.error_logs = []
 
     def __str__(self):
-        return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity}"
+        return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity} | Errors: {len(self.error_logs)}"
+
 
 
 class Job:
@@ -258,7 +261,7 @@ class JobUnitScheduler:
             return f"Rejected: Job needs {job.required_capacity}, but Unit only has {remaining} capacity."
 
     # US44: Job Retry Mechanism
-    def us44_fail_and_retry_job(self, job_id: int) -> str:
+    def us44_fail_and_retry_job(self, job_id: int, error_msg: str = "Execution Error") -> str:
                 job = self.view_job(job_id)
                 if not job:
                     return "Error: Job not found."
@@ -266,6 +269,17 @@ class JobUnitScheduler:
                 if job.complete:
                     return "Error: Cannot retry a completed job."
 
+                # US46 Integration: Log the error to any units associated with the job
+                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                for u_str in job.units:
+                        # Extract ID from "Unit X" string format used in us43
+                        try:
+                            u_id = int(u_str.split()[-1])
+                            unit = next((u for u in self.units if u.id == u_id), None)
+                            if unit:
+                                unit.error_logs.append(f"[{timestamp}] Job {job_id}: {error_msg}")
+                        except:
+                             continue
                 if job.retry_count < job.max_retries:
                     job.retry_count += 1
                     job.status = "Retrying"
@@ -273,3 +287,8 @@ class JobUnitScheduler:
                 else:
                     job.status = "Failed (Max Retries)"
                     return f"Job {job_id} failed. Maximum retries ({job.max_retries}) reached. Manual intervention required."
+
+ # US46: Unit-Level Error Log Viewer retrieval method
+    def get_unit_error_logs(self, unit_id: int) -> List[str]:
+        unit = next((u for u in self.units if u.id == unit_id), None)
+        return unit.error_logs if unit else []
