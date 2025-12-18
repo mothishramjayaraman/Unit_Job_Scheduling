@@ -16,7 +16,7 @@ class Unit:
         self.historical_loads = []
 
     def __str__(self):
-        return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)}"
+        return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity}"
 
 
 class Job:
@@ -32,6 +32,10 @@ class Job:
         self.priority = priority
         # US43: Requirement for validation
         self.required_capacity = required_capacity
+        # US44: Retry Attributes
+        self.max_retries = 3  # Default maximum retry limit
+        self.retry_count = 0  # Current number of retry attempts
+        self.status = "Pending"  # Tracking current job state
 
     def __str__(self):
         status = "Completed" if self.complete else "Pending"
@@ -58,6 +62,7 @@ class JobUnitScheduler:
         }
         self.Des_length = 100
         self.system_capabilities: set = set()
+        self.default_deadline_hours = 24
 
     # US1: Add Job
     def add_job(self, name, description, deadline=None, priority=5, required_capacity=10.0):
@@ -251,3 +256,20 @@ class JobUnitScheduler:
         else:
             remaining = unit.max_capacity - unit.current_load
             return f"Rejected: Job needs {job.required_capacity}, but Unit only has {remaining} capacity."
+
+    # US44: Job Retry Mechanism
+    def us44_fail_and_retry_job(self, job_id: int) -> str:
+                job = self.view_job(job_id)
+                if not job:
+                    return "Error: Job not found."
+
+                if job.complete:
+                    return "Error: Cannot retry a completed job."
+
+                if job.retry_count < job.max_retries:
+                    job.retry_count += 1
+                    job.status = "Retrying"
+                    return f"Job {job_id} failed. Automatically retrying... (Attempt {job.retry_count}/{job.max_retries})"
+                else:
+                    job.status = "Failed (Max Retries)"
+                    return f"Job {job_id} failed. Maximum retries ({job.max_retries}) reached. Manual intervention required."

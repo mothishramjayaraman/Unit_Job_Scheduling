@@ -4,10 +4,10 @@ from datetime import datetime
 s = JobUnitScheduler()
 
 s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
-s.units[0].load = 80.0
+s.units[0].current_load = 80.0
 s.units[0].historical_loads = [60.0, 70.0, 80.0]
 s.add_unit(2, ['CPU', 'Storage', 'NVMe'])
-s.units[1].load = 15.0
+s.units[1].current_load = 15.0
 s.units[1].historical_loads = [10.0, 15.0]
 
 print("Welcome to Job Scheduler")
@@ -27,6 +27,7 @@ def show_menu():
     print("11. Job/Unit Configuration Menu")
     print("12. Tag Job with description(Add/Remove/Filter)(US20)")
     print("13. Unit Capacity Validation(US43)")
+    print("14. Job Retry Mechanism(US44)")
     print("0. Exit")
 
 def show_config_menu():
@@ -39,7 +40,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 13):- ")
+    choice=input("Enter your choice ( 1 to 14):- ")
 
     # US1: Add job
     if choice == "1":
@@ -68,7 +69,7 @@ while True:
             for job in jobs:
                 print(f"Job ID: {job.id}, ")
                 print(f"Name: {job.name}, ")
-
+                print(f"Status: {job.status}")
 
     # US3: View a job
     elif choice == "3":
@@ -81,6 +82,8 @@ while True:
             print(f"Name: {job.name}, ")
             print(f"Description: {job.description},")
             print(f"Deadline: {job.deadline}")
+            print(f"Status: {job.status}")
+            print(f"Retry Count: {job.retry_count}/{job.max_retries}")
         else:
             print("\nJob not found.")
 
@@ -282,6 +285,15 @@ while True:
 
         except ValueError:
             print("Invalid input. Please enter numerical IDs for Job and Unit.")
+    # US44: Job Retry Mechanism
+    elif choice == "14":
+        print("\n=> Report Job Failure & Retry (US44)")
+        try:
+            job_id_input = int(input("Enter Job ID that failed: "))
+            result = s.us44_fail_and_retry_job(job_id_input)
+            print(f"\nSystem Action: {result}")
+        except ValueError:
+            print("Invalid input. Please enter a numerical Job ID.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
