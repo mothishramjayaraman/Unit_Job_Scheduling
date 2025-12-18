@@ -29,6 +29,7 @@ def show_menu():
     print("13. Unit Capacity Validation(US43)")
     print("14. Job Retry Mechanism(US44)")
     print("15. View Unit Error Logs (US46)")
+    print("16. View Unit Health Status (US17)")
     print("0. Exit")
 
 def show_config_menu():
@@ -41,7 +42,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 15):- ")
+    choice=input("Enter your choice ( 1 to 16):- ")
 
     # US1: Add job
     if choice == "1":
@@ -342,6 +343,22 @@ while True:
                         print(log)
             except ValueError:
                 print("Invalid input. Please enter a numerical Unit ID.")
+
+    # US17: Unit Health Status Tracking
+    elif choice == "16":
+        print("\n=> Unit Health Status (US‑U8)")
+
+        status = s.unit_health_status()
+
+        if not status:
+            print("No units available.")
+        else:
+            for u in status:
+                print("--------------------------------")
+                print(f"Unit ID        : {u['unit_id']}")
+                print(f"Load           : {u['current_load']} / {u['max_capacity']}")
+                print(f"Load %         : {u['load_percent']}%")
+                print(f"Health Status  : {u['health']}")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
