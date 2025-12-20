@@ -39,6 +39,7 @@ def show_config_menu():
     print("2. View Unit Load History(US55)")
     print("3. View Job Priority Legend(US57)")
     print("4. Reset Unit Load History (US61)")
+    print("5. List System Capabilities(US62)")
     print("0. Back to Main Menu")
 while True:
     show_menu()
@@ -187,7 +188,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-4):- ")
+            config_choice = input("\nEnter your configuration choice (1-5):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -244,6 +245,16 @@ while True:
                 except ValueError:
                         print("Invalid input. Please enter a numerical Unit ID.")
 
+            # US62: List System Capabilities
+            elif config_choice == "5":
+                        print("\n--- List System Capabilities (US62) ---")
+                        capabilities = s.us7_list_capabilities()
+                        if capabilities:
+                            print("The following capabilities are available in the cluster:")
+                            for cap in capabilities:
+                                print(f" - {cap}")
+                        else:
+                            print("No units have been added yet. The master capability list is empty.")
 
         # 0. Back to Main Menu
             elif config_choice == "0":

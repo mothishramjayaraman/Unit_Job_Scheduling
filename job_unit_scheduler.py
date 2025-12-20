@@ -305,6 +305,12 @@ class JobUnitScheduler:
         target.dependencies.append(prerequisite_id)
         return f"Success: Job {target_id} now depends on Job {prerequisite_id}."
 
+    #US62: List System Capabilities
+    def us7_list_capabilities(self) -> List[str]:
+
+            return sorted(list(self.system_capabilities))
+
+
     def check_dependencies_met(self, job_id: int) -> bool:
 
         job = self.view_job(job_id)
