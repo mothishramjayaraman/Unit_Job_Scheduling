@@ -30,6 +30,7 @@ def show_menu():
     print("14. Job Retry Mechanism(US44)")
     print("15. View Unit Error Logs (US46)")
     print("16. View Unit Health Status (US17)")
+    print("17. Job Dependency Checker (US45)")
     print("0. Exit")
 
 def show_config_menu():
@@ -42,7 +43,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 16):- ")
+    choice=input("Enter your choice ( 1 to 17):- ")
 
     # US1: Add job
     if choice == "1":
@@ -309,9 +310,14 @@ while True:
             print("Invalid sub choice.")
     # US43: Unit Capacity Validation
     elif choice == "13":
-        print("\n=> Assign Job with Capacity Validation (US43)")
+        print("\n=> Assign Job with Capacity Validation & Dependency Validation (US43/45)")
         try:
             job_id_input = int(input("Enter Job ID: "))
+
+            if not s.check_dependencies_met(job_id_input):
+                print("\nRejected: Prerequisite jobs are not yet completed.")
+                continue
+
             unit_id_input = int(input("Enter Unit ID: "))
             result = s.us43_validate_and_assign(job_id_input, unit_id_input)
             print(f"\nValidation Result: {result}")
@@ -359,6 +365,16 @@ while True:
                 print(f"Load           : {u['current_load']} / {u['max_capacity']}")
                 print(f"Load %         : {u['load_percent']}%")
                 print(f"Health Status  : {u['health']}")
+    # US45: Job Dependency Checker (US45)
+    elif choice == "17":
+        print("\n=> Job Dependency Checker (US45)")
+        try:
+            target_id = int(input("Enter Job ID that needs a dependency: "))
+            depends_on = int(input("Enter Job ID it must wait for: "))
+            result = s.add_dependency(target_id, depends_on)
+            print(f"\nResult: {result}")
+        except ValueError:
+            print("Invalid input. Please enter numerical IDs.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")

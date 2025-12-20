@@ -10,12 +10,11 @@ class Unit:
     def __init__(self, unit_id: int, capabilities: List[str], max_capacity: float = 100.0):
         self.id = unit_id
         self.capabilities = capabilities
-        # US43: Capacity management attributes
         self.max_capacity = max_capacity
         self.current_load = 0.0
         self.historical_loads = []
-        # US46: Unit-level error logs storage
         self.error_logs = []
+        self.dependencies: List[int] = []
 
     def __str__(self):
         return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity} | Errors: {len(self.error_logs)}"
@@ -33,12 +32,11 @@ class Job:
         self.complete = False
         self.tags= []
         self.priority = priority
-        # US43: Requirement for validation
         self.required_capacity = required_capacity
-        # US44: Retry Attributes
-        self.max_retries = 3  # Default maximum retry limit
-        self.retry_count = 0  # Current number of retry attempts
-        self.status = "Pending"  # Tracking current job state
+        self.max_retries = 3
+        self.retry_count = 0
+        self.status = "Pending"
+        self.dependencies: List[int] = []
 
     def __str__(self):
         status = "Completed" if self.complete else "Pending"
@@ -292,3 +290,29 @@ class JobUnitScheduler:
     def get_unit_error_logs(self, unit_id: int) -> List[str]:
         unit = next((u for u in self.units if u.id == unit_id), None)
         return unit.error_logs if unit else []
+
+# US45: Job Dependency Checker Logic
+    def add_dependency(self, target_id: int, prerequisite_id: int) -> str:
+
+        target = self.view_job(target_id)
+        prereq = self.view_job(prerequisite_id)
+
+        if not target or not prereq:
+            return "Error: One or both jobs not found."
+        if target_id == prerequisite_id:
+            return "Error: A job cannot depend on itself."
+
+        target.dependencies.append(prerequisite_id)
+        return f"Success: Job {target_id} now depends on Job {prerequisite_id}."
+
+    def check_dependencies_met(self, job_id: int) -> bool:
+
+        job = self.view_job(job_id)
+        if not job:
+            return False
+
+        for dep_id in job.dependencies:
+            dep_job = self.view_job(dep_id)
+            if not dep_job or not dep_job.complete:
+                return False
+        return True
