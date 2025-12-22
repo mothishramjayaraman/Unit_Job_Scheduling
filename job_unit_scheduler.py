@@ -322,3 +322,44 @@ class JobUnitScheduler:
             if not dep_job or not dep_job.complete:
                 return False
         return True
+
+    # US48: EXPORT UNIT ACTIVITY SUMMARY
+
+    def export_unit_activity_summary(self, unit_id: int) -> str:
+
+        unit = next((u for u in self.units if u.id == unit_id), None)
+        if not unit:
+           return f"Error: Unit {unit_id} not found."
+
+        # Filter jobs that have "Unit X" in their units list
+        search_label = f"Unit {unit_id}"
+        unit_jobs = [j for j in self.jobs if search_label in j.units]
+
+        filename = f"Unit_{unit_id}_Activity_Log.txt"
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        try:
+            with open(filename, "w") as file:
+                file.write(f"UNIT ACTIVITY REPORT\n")
+                file.write(f"====================\n")
+                file.write(f"Unit ID: {unit_id}\n")
+                file.write(f"Report Generated: {timestamp}\n")
+                file.write(f"Capabilities: {', '.join(unit.capabilities)}\n")
+                file.write(f"Final Load: {unit.current_load}/{unit.max_capacity}\n")
+                file.write(f"--------------------\n\n")
+
+                if not unit_jobs:
+                    file.write("No jobs executed on this unit.\n")
+                else:
+                    file.write(f"{'Job ID':<8} | {'Name':<20} | {'Status':<15}\n")
+                    file.write(f"{'-' * 45}\n")
+                    for j in unit_jobs:
+                        file.write(f"{j.id:<8} | {j.name[:20]:<20} | {j.status:<15}\n")
+
+                file.write(f"\nError Logs Found: {len(unit.error_logs)}\n")
+                for log in unit.error_logs:
+                    file.write(f"- {log}\n")
+
+            return f"Success! Activity exported to {filename}"
+        except Exception as e:
+            return f"File Error: {str(e)}"

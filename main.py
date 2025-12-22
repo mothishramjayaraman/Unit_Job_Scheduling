@@ -31,6 +31,7 @@ def show_menu():
     print("15. View Unit Error Logs (US46)")
     print("16. View Unit Health Status (US17)")
     print("17. Job Dependency Checker (US45)")
+    print("18. Export Unit Activity Summary (US48)")
     print("0. Exit")
 
 def show_config_menu():
@@ -44,7 +45,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 17):- ")
+    choice=input("Enter your choice ( 1 to 18):- ")
 
     # US1: Add job
     if choice == "1":
@@ -386,6 +387,17 @@ while True:
             print(f"\nResult: {result}")
         except ValueError:
             print("Invalid input. Please enter numerical IDs.")
+
+    # US48: Export Unit Activity Summary
+    elif choice == "18":
+        print("\n=> Export Unit Activity Summary (US48)")
+        try:
+            u_id = int(input("Enter Unit ID to generate text report: "))
+            # This calls the new method in your scheduler
+            result = s.export_unit_activity_summary(u_id)
+            print(f"\n{result}")
+        except ValueError:
+            print("Invalid input. Please enter a numerical Unit ID.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
