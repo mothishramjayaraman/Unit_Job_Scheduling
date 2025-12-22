@@ -41,6 +41,7 @@ def show_config_menu():
     print("3. View Job Priority Legend(US57)")
     print("4. Reset Unit Load History (US61)")
     print("5. List System Capabilities(US62)")
+    print("6. Configure Default Deadline(US60)")
     print("0. Back to Main Menu")
 while True:
     show_menu()
@@ -189,7 +190,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-5):- ")
+            config_choice = input("\nEnter your configuration choice (1-6):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -256,6 +257,22 @@ while True:
                                 print(f" - {cap}")
                         else:
                             print("No units have been added yet. The master capability list is empty.")
+
+            # US60: Configure Default Deadline
+            elif config_choice == "6":
+                        print(f"\n--- Configure Default Deadline (US60) ---")
+
+                        print(f"Current Default Deadline: {s.default_deadline_hours} hours.")
+
+                        try:
+                            new_hours = int(input("Enter NEW default hours for job deadlines (e.g., 24, 72): "))
+
+                            if s.us60_set_default_deadline(new_hours):
+                                print(f"\n Success! New default deadline set to {new_hours} hours.")
+                            else:
+                                print("Error: Deadline must be a positive number of hours.")
+                        except ValueError:
+                            print(" Invalid input. Please enter a whole number.")
 
         # 0. Back to Main Menu
             elif config_choice == "0":

@@ -310,6 +310,13 @@ class JobUnitScheduler:
 
             return sorted(list(self.system_capabilities))
 
+    # US60: Configure Default Deadline
+    def us60_set_default_deadline(self, hours: int) -> bool:
+
+        if hours > 0:
+            self.default_deadline_hours = hours
+            return True
+        return False
 
     def check_dependencies_met(self, job_id: int) -> bool:
 
