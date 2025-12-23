@@ -408,3 +408,34 @@ class JobUnitScheduler:
             escalated_jobs.append(job)
 
         return escalated_jobs
+
+    # US69: Automatic job timeout handling(start)
+    def start_job(self, job_id: int, max_runtime: int):
+            job = self.view_job(job_id)
+            if not job:
+                return "Error: Job not found."
+
+            if job.status == "RUNNING":
+                return "Job is already running."
+
+            job.start_time = datetime.now()
+            job.max_runtime = max_runtime  # in seconds
+            job.status = "RUNNING"
+
+            return f"Job {job_id} started with max runtime {max_runtime} seconds."
+
+    # US69: Automatic job timeout handling(check timeout)
+    def check_job_timeouts(self):
+            now = datetime.now()
+            timed_out_jobs = []
+
+            for job in self.jobs:
+                if job.status == "RUNNING":
+                    if job.start_time and job.max_runtime:
+                        elapsed = (now - job.start_time).total_seconds()
+                        if elapsed > job.max_runtime:
+                            job.status = "TIMED_OUT"
+                            job.failure_count += 1
+                            job.last_error_message = "Exceeded maximum runtime"
+                            timed_out_jobs.append(job)
+            return timed_out_jobs

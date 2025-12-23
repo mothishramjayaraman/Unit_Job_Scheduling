@@ -33,6 +33,7 @@ def show_menu():
     print("17. Job Dependency Checker (US45)")
     print("18. Export Unit Activity Summary (US48)")
     print("19. Auto-Escalate Job Priority (US19)")
+    print("20. Job Timeout Handling (US69)")
     print("0. Exit")
 
 def show_config_menu():
@@ -44,10 +45,16 @@ def show_config_menu():
     print("5. List System Capabilities(US62)")
     print("6. Configure Default Deadline(US60)")
     print("0. Back to Main Menu")
+
+def show_timeout_menu():
+    print("\n--- Job Timeout Handling (US67) ---")
+    print("1. Start Job Execution")
+    print("2. Check Job Timeouts")
+    print("0. Back to Main Menu")
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 19):- ")
+    choice=input("Enter your choice ( 1 to 20):- ")
 
     # US1: Add job
     if choice == "1":
@@ -434,6 +441,45 @@ while True:
                 print(f"New Priority  : P{job.priority}")
                 print(f"Deadline      : {job.deadline}")
                 print(f"Log Entries   : {len(job.priority_change_log)}")
+
+    # US69: Automatic Job Timeout Handling
+    elif choice == "20":
+        while True:
+            show_timeout_menu()
+            sub_choice = input("Enter your choice: ")
+            # Start Job
+            if sub_choice == "1":
+                print("\n=> Start Job Execution")
+                try:
+                    job_id = int(input("Enter Job ID to start: "))
+                    max_runtime = int(input("Enter max runtime in seconds: "))
+                    result = s.start_job(job_id, max_runtime)
+                    print(result)
+                except ValueError:
+                    print("Invalid input. Please enter numeric values.")
+
+            # Check Timeouts
+            elif sub_choice == "2":
+                print("\n=> Checking Job Timeouts")
+                timed_out_jobs = s.check_job_timeouts()
+
+                if not timed_out_jobs:
+                    print("No jobs have timed out.")
+                else:
+                    print("\nTimed Out Jobs:")
+                    for job in timed_out_jobs:
+                        print("--------------------------------")
+                        print(f"Job ID        : {job.id}")
+                        print(f"Job Name      : {job.name}")
+                        print(f"Status        : {job.status}")
+                        print(f"Failures      : {job.failure_count}")
+                        print(f"Last Error    : {job.last_error_message}")
+            elif sub_choice == "0":
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
