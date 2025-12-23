@@ -442,7 +442,7 @@ while True:
                 print(f"Deadline      : {job.deadline}")
                 print(f"Log Entries   : {len(job.priority_change_log)}")
 
-    # US69: Automatic Job Timeout Handling
+    # US69: Automatic Job Timeout Handling(start/check)
     elif choice == "20":
         while True:
             show_timeout_menu()
