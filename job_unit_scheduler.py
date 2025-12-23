@@ -370,3 +370,41 @@ class JobUnitScheduler:
             return f"Success! Activity exported to {filename}"
         except Exception as e:
             return f"File Error: {str(e)}"
+
+    # US19: Auto-Escalate Job Priority
+    def us19_auto_escalate_job_priority(self):
+        now = datetime.now()
+        escalated_jobs = []
+
+        for job in self.jobs:
+            if job.complete or not job.deadline:
+                continue
+
+            if isinstance(job.deadline, str):
+                try:
+                    deadline_dt = datetime.strptime(job.deadline, "%Y-%m-%d")
+                except ValueError:
+                    continue
+            else:
+                deadline_dt = job.deadline
+
+            hours_left = (deadline_dt - now).total_seconds() / 3600
+            old_priority = job.priority
+
+            if hours_left < 24 and job.priority > 1:
+                job.priority = 1
+            elif hours_left < 48 and job.priority > 2:
+                job.priority = 2
+            else:
+                continue
+
+            job.priority_change_log.append({
+                    "timestamp": now.strftime("%Y-%m-%d %H:%M:%S"),
+                    "old_priority": old_priority,
+                    "new_priority": job.priority,
+                    "reason": "Deadline approaching"
+            })
+
+            escalated_jobs.append(job)
+
+        return escalated_jobs

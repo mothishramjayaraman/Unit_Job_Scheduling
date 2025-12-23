@@ -32,6 +32,7 @@ def show_menu():
     print("16. View Unit Health Status (US17)")
     print("17. Job Dependency Checker (US45)")
     print("18. Export Unit Activity Summary (US48)")
+    print("19. Auto-Escalate Job Priority (US19)")
     print("0. Exit")
 
 def show_config_menu():
@@ -46,7 +47,7 @@ def show_config_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 18):- ")
+    choice=input("Enter your choice ( 1 to 19):- ")
 
     # US1: Add job
     if choice == "1":
@@ -415,6 +416,24 @@ while True:
             print(f"\n{result}")
         except ValueError:
             print("Invalid input. Please enter a numerical Unit ID.")
+
+    # US19: Auto-Escalate Job Priority
+    elif choice == "19":
+        print("\n=> Auto-Escalate Job Priority (US19)")
+
+        escalated = s.us19_auto_escalate_job_priority()
+
+        if not escalated:
+            print("No jobs required priority escalation.")
+        else:
+            print("\nEscalated Jobs:")
+            for job in escalated:
+                print("--------------------------------")
+                print(f"Job ID        : {job.id}")
+                print(f"Job Name      : {job.name}")
+                print(f"New Priority  : P{job.priority}")
+                print(f"Deadline      : {job.deadline}")
+                print(f"Log Entries   : {len(job.priority_change_log)}")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
