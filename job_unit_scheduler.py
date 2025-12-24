@@ -37,6 +37,7 @@ class Job:
         self.retry_count = 0
         self.status = "Pending"
         self.dependencies: List[int] = []
+        self.detailed_logging = False
 
     def __str__(self):
         status = "Completed" if self.complete else "Pending"
@@ -329,6 +330,14 @@ class JobUnitScheduler:
             if not dep_job or not dep_job.complete:
                 return False
         return True
+
+    # US59: Enable/Disable Job Logging
+    def us59_toggle_logging(self, job_id: int, enable: bool) -> bool:
+            job = self.view_job(job_id)
+            if job:
+                job.detailed_logging = enable
+                return True
+            return False
 
     # US48: EXPORT UNIT ACTIVITY SUMMARY
 

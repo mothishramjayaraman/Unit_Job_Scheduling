@@ -45,6 +45,7 @@ def show_config_menu():
     print("4. Reset Unit Load History (US61)")
     print("5. List System Capabilities(US62)")
     print("6. Configure Default Deadline(US60)")
+    print("7. Enable/Disable Job Logging (US59)")
     print("0. Back to Main Menu")
 
 def show_timeout_menu():
@@ -199,7 +200,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-6):- ")
+            config_choice = input("\nEnter your configuration choice (1-7):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -282,6 +283,23 @@ while True:
                                 print("Error: Deadline must be a positive number of hours.")
                         except ValueError:
                             print(" Invalid input. Please enter a whole number.")
+
+            # US59: Enable/Disable Job Logging
+            elif config_choice == "7":
+                print("\n--- Job Logging Configuration (US59) ---")
+                try:
+                    j_id = int(input("Enter Job ID to configure logging: "))
+                    status_input = input("Enable detailed logging? (yes/no): ").lower()
+
+                    enable = True if status_input == "yes" else False
+
+                    if s.us59_toggle_logging(j_id, enable):
+                        status_text = "ENABLED" if enable else "DISABLED"
+                        print(f"Success! Detailed logging is now {status_text} for Job {j_id}.")
+                    else:
+                        print("Error: Job ID not found.")
+                except ValueError:
+                    print("Invalid input. Please enter a numerical Job ID.")
 
         # 0. Back to Main Menu
             elif config_choice == "0":
