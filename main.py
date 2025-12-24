@@ -34,6 +34,7 @@ def show_menu():
     print("18. Export Unit Activity Summary (US48)")
     print("19. Auto-Escalate Job Priority (US19)")
     print("20. Job Timeout Handling (US69)")
+    print("21. Job Resource Overconsumption Detection (US51)")
     print("0. Exit")
 
 def show_config_menu():
@@ -54,7 +55,7 @@ def show_timeout_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 20):- ")
+    choice=input("Enter your choice ( 1 to 21):- ")
 
     # US1: Add job
     if choice == "1":
@@ -418,7 +419,6 @@ while True:
         print("\n=> Export Unit Activity Summary (US48)")
         try:
             u_id = int(input("Enter Unit ID to generate text report: "))
-            # This calls the new method in your scheduler
             result = s.export_unit_activity_summary(u_id)
             print(f"\n{result}")
         except ValueError:
@@ -478,6 +478,16 @@ while True:
                 break
             else:
                 print("Invalid choice. Please try again.")
+    elif choice == "21":
+        print("\n=> Job Resource Overconsumption Detection #51")
+        try:
+            target_job_id = int(input("Enter Job ID to validate: "))
+            measured_usage = float(input("Enter measured resource usage from system: "))
+
+            result = s.job_resource_overconsumption_detection_51(target_job_id, measured_usage)
+            print(f"\n{result}")
+        except ValueError:
+            print("Invalid input. Please enter numbers for Job ID and Usage.")
 
 
     # Exit from menu

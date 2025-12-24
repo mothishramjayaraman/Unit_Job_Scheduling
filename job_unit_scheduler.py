@@ -270,7 +270,7 @@ class JobUnitScheduler:
                 # US46 Integration: Log the error to any units associated with the job
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 for u_str in job.units:
-                        # Extract ID from "Unit X" string format used in us43
+
                         try:
                             u_id = int(u_str.split()[-1])
                             unit = next((u for u in self.units if u.id == u_id), None)
@@ -338,7 +338,6 @@ class JobUnitScheduler:
         if not unit:
            return f"Error: Unit {unit_id} not found."
 
-        # Filter jobs that have "Unit X" in their units list
         search_label = f"Unit {unit_id}"
         unit_jobs = [j for j in self.jobs if search_label in j.units]
 
@@ -439,3 +438,28 @@ class JobUnitScheduler:
                             job.last_error_message = "Exceeded maximum runtime"
                             timed_out_jobs.append(job)
             return timed_out_jobs
+
+    def job_resource_overconsumption_detection_51(self, job_id: int, actual_usage: float) -> str:
+        job = self.view_job(job_id)
+        if not job:
+            return "Error: Job not found."
+
+        if actual_usage > job.required_capacity:
+            variance = actual_usage - job.required_capacity
+            job.status = "FLAGGED: Overconsumption"
+
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            for u_str in job.units:
+                try:
+                    u_id = int(u_str.split()[-1])
+                    unit = next((u for u in self.units if u.id == u_id), None)
+                    if unit:
+                        unit.error_logs.append(
+                            f"[{timestamp}] ALERT #51: Job {job_id} used {actual_usage}, "
+                            f"exceeding declared {job.required_capacity} by {variance}."
+                        )
+                except:
+                    continue
+            return f" ALERT: Job Resource Overconsumption Detected (#51)! Job {job_id} flagged."
+
+        return f" Normal: Job {job_id} usage is within declared capacity."
