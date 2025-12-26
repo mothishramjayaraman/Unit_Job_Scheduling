@@ -46,6 +46,7 @@ def show_config_menu():
     print("5. List System Capabilities(US62)")
     print("6. Configure Default Deadline(US60)")
     print("7. Enable/Disable Job Logging (US59)")
+    print("8. Remove Unit From Scheduler (US56)")
     print("0. Back to Main Menu")
 
 def show_timeout_menu():
@@ -200,7 +201,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-7):- ")
+            config_choice = input("\nEnter your configuration choice (1-8):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -300,6 +301,18 @@ while True:
                         print("Error: Job ID not found.")
                 except ValueError:
                     print("Invalid input. Please enter a numerical Job ID.")
+
+            # US56: Remove Unit from Scheduler
+            elif config_choice == "8":
+                    print("\n--- Remove Unit from scheduler (US56) ---")
+                    try:
+                        u_id = int(input("Enter Unit ID to remove from scheduler inventory: "))
+                        if s.us56_remove_unit(u_id):
+                            print(f"Success! Unit {u_id} has been removed and capabilities updated.")
+                        else:
+                            print("Error: Unit ID not found in scheduler inventory.")
+                    except ValueError:
+                        print("Invalid input. Please enter a numerical Unit ID.")
 
         # 0. Back to Main Menu
             elif config_choice == "0":

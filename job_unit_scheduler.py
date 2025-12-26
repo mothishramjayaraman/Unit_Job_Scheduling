@@ -339,6 +339,22 @@ class JobUnitScheduler:
                 return True
             return False
 
+            # US56: Remove Unit From Scheduler
+
+    def us56_remove_unit(self, unit_id: int) -> bool:
+        unit_to_remove = None
+        for unit in self.units:
+            if unit.id == unit_id:
+                unit_to_remove = unit
+                break
+        if unit_to_remove:
+            self.units.remove(unit_to_remove)
+            self.system_capabilities = set()
+            for u in self.units:
+                self.system_capabilities.update(u.capabilities)
+            return True
+        return False
+
     # US48: EXPORT UNIT ACTIVITY SUMMARY
 
     def export_unit_activity_summary(self, unit_id: int) -> str:
