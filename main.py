@@ -35,6 +35,7 @@ def show_menu():
     print("19. Auto-Escalate Job Priority (US19)")
     print("20. Job Timeout Handling (US69)")
     print("21. Job Resource Overconsumption Detection (US51)")
+    print("22. Schedule Job (Preemption Rules) (US14)")
     print("0. Exit")
 
 def show_config_menu():
@@ -54,10 +55,11 @@ def show_timeout_menu():
     print("1. Start Job Execution")
     print("2. Check Job Timeouts")
     print("0. Back to Main Menu")
+
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 21):- ")
+    choice=input("Enter your choice ( 1 to 22):- ")
 
     # US1: Add job
     if choice == "1":
@@ -69,7 +71,8 @@ while True:
             req_cap = float(input("Enter capacity required for this job (default 10.0): ") or 10.0)
         except ValueError:
             req_cap = 10.0
-        job = s.add_job(name, description, deadline, required_capacity=req_cap)
+        priority = int(input("Enter job priority (1=Critical, 5=Background): "))
+        job = s.add_job(name, description, deadline, priority=priority, required_capacity=req_cap)
         # US16: Shows Description too long without crash
         if isinstance(job, str):
             print("\n" + job)
@@ -473,7 +476,7 @@ while True:
                 print(f"Deadline      : {job.deadline}")
                 print(f"Log Entries   : {len(job.priority_change_log)}")
 
-        # US69: Automatic Job Timeout Handling(start/check)
+    # US69: Automatic Job Timeout Handling(start/check)
     elif choice == "20":
         while True:
             show_timeout_menu()
@@ -520,6 +523,18 @@ while True:
         except ValueError:
             print("Invalid input. Please enter numbers for Job ID and Usage.")
 
+    # US14: Schedule Job Preemption Rules
+    elif choice == "22":
+        print("\n=> Schedule Job with Preemption (US14)")
+        try:
+            job_id = int(input("Enter Job ID to schedule: "))
+            result = s.schedule_job(job_id)
+            print(result)
+            job = s.view_job(job_id)
+            if job:
+                print(f"Job {job.id} status → {job.status}")
+        except ValueError:
+            print("Invalid input. Please enter a numerical Job ID.")
 
     # Exit from menu
     elif choice == "0":
