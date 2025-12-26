@@ -38,6 +38,7 @@ def show_menu():
     print("22. Schedule Job (Preemption Rules) (US14)")
     print("23. Mark Job as Failed (US42)")
     print("24. Auto-Cancel Stalled Jobs (US50)")
+    print("25. Analyze Job Execution Patterns (US52)")
     print("0. Exit")
 
 def show_config_menu():
@@ -61,7 +62,7 @@ def show_timeout_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 24):- ")
+    choice=input("Enter your choice ( 1 to 25):- ")
 
     # US1: Add job
     if choice == "1":
@@ -572,6 +573,34 @@ while True:
                     print(f" - [ID: {job.id}] {job.name} (Stalled for > {threshold}s)")
         except ValueError:
             print("Invalid input. Please enter a number for the threshold.")
+
+        # US52: Job Execution Pattern Analyzer
+    elif choice == "25":
+        print("\n=> Job Execution Pattern Analyzer #52")
+        analysis = s.analyze_execution_patterns_52()
+
+        if not analysis['total_jobs']:
+            print("No job data available to analyze yet.")
+        else:
+            print(f"--- System Analysis Report ---")
+            print(f"Total Jobs Processed: {analysis['total_jobs']}")
+            print(f"Average Execution Time: {analysis['avg_runtime']:.2f} seconds")
+
+            print("\n[Peak Submission Times]")
+            if not analysis['peak_hours']:
+                print(" - Not enough data for peak hour mapping.")
+            for hour, count in analysis['peak_hours'].items():
+                print(f" - {hour:02}:00 : {count} jobs submitted")
+
+            print("\n[Slowest Jobs (Top 3)]")
+            if not analysis['slow_jobs']:
+                print(" - No completed jobs found to measure speed.")
+            for job_info in analysis['slow_jobs']:
+                print(f" - ID: {job_info['id']} | Name: {job_info['name']} | Time: {job_info['runtime']:.2f}s")
+
+            print("\n[Priority Distribution]")
+            for p_level, count in analysis['priority_counts'].items():
+                print(f" - Priority P{p_level}: {count} jobs")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")

@@ -49,7 +49,8 @@ class Job:
         self.max_runtime = None
         self.failure_count = 0
         self.last_error_message = None
-
+        self.created_at = datetime.now()
+        self.end_time = None
         self.priority_change_log = []
 
     def __str__(self):
@@ -173,6 +174,8 @@ class JobUnitScheduler:
         for job in self.jobs:
             if job.id == job_id:
                 job.complete = True
+                job.status = "Done"
+                job.end_time = datetime.now()
                 return True  # job marked completed
         return False  # job not found
 
@@ -627,3 +630,32 @@ class JobUnitScheduler:
                         stalled_jobs.append(job)
 
             return stalled_jobs
+
+    # US52: Job Execution Pattern Analyzer
+
+    def analyze_execution_patterns_52(self):
+
+        completed_jobs = [j for j in self.jobs if j.complete and j.start_time and j.end_time]
+        peak_hours = {}
+        for job in self.jobs:
+            hour = job.created_at.hour
+            peak_hours[hour] = peak_hours.get(hour, 0) + 1
+        runtimes = []
+        slow_jobs_list = []
+        for job in completed_jobs:
+            duration = (job.end_time - job.start_time).total_seconds()
+            runtimes.append(duration)
+            slow_jobs_list.append({'id': job.id, 'name': job.name, 'runtime': duration})
+        slow_jobs_list.sort(key=lambda x: x['runtime'], reverse=True)
+        avg_runtime = sum(runtimes) / len(runtimes) if runtimes else 0
+        priority_counts = {}
+        for job in self.jobs:
+            priority_counts[job.priority] = priority_counts.get(job.priority, 0) + 1
+
+        return {
+            'total_jobs': len(self.jobs),
+            'avg_runtime': avg_runtime,
+            'peak_hours': peak_hours,
+            'slow_jobs': slow_jobs_list[:3],
+            'priority_counts': priority_counts
+        }
