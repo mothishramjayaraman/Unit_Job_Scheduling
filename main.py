@@ -39,6 +39,7 @@ def show_menu():
     print("23. Mark Job as Failed (US42)")
     print("24. Auto-Cancel Stalled Jobs (US50)")
     print("25. Analyze Job Execution Patterns (US52)")
+    print("26. Predict Next Available Unit Slot (US47)")
     print("0. Exit")
 
 def show_config_menu():
@@ -601,6 +602,27 @@ while True:
             print("\n[Priority Distribution]")
             for p_level, count in analysis['priority_counts'].items():
                 print(f" - Priority P{p_level}: {count} jobs")
+        # US47: Predict Next Available Unit Slot
+    elif choice == "26":
+        print("\n=> Predict Next Available Unit Slot #47")
+        try:
+            u_id = int(input("Enter Unit ID to check availability: "))
+            prediction = s.predict_next_slot_47(u_id)
+
+            if "Error" in prediction:
+                print(f"\n{prediction}")
+            else:
+                print(f"\n--- Availability Prediction for Unit {u_id} ---")
+                print(f"Current Load: {prediction['current_load']}%")
+                print(f"Status      : {prediction['status']}")
+                print(f"Next Slot   : {prediction['next_slot_estimate']}")
+
+                if prediction['available_now']:
+                    print(" This unit can accept new jobs immediately.")
+                else:
+                    print(" This unit is currently at high capacity.")
+        except ValueError:
+            print("Invalid input. Please enter a numerical Unit ID.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")

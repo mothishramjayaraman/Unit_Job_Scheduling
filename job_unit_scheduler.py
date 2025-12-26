@@ -659,3 +659,31 @@ class JobUnitScheduler:
             'slow_jobs': slow_jobs_list[:3],
             'priority_counts': priority_counts
         }
+
+        # US47: Predict Next Available Unit Slot
+    def predict_next_slot_47(self, unit_id: int):
+            unit = next((u for u in self.units if u.id == unit_id), None)
+
+            if not unit:
+                return "Error: Unit not found in the system."
+
+            is_available = unit.current_load < unit.max_capacity
+            load_percentage = (unit.current_load / unit.max_capacity) * 100
+
+            if is_available and load_percentage < 70:
+                status = "High Availability"
+                estimate = "Immediate - Plenty of space available."
+            elif is_available:
+                status = "Limited Capacity"
+                estimate = "Soon - Unit is nearly full, expect small delays."
+            else:
+                status = "Unit Full"
+                estimate = "Delayed - Waiting for active jobs to complete or timeout."
+
+            return {
+                'unit_id': unit_id,
+                'current_load': round(load_percentage, 2),
+                'available_now': is_available,
+                'status': status,
+                'next_slot_estimate': estimate
+            }
