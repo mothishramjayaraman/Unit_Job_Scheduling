@@ -487,3 +487,27 @@ class JobUnitScheduler:
             return f" ALERT: Job Resource Overconsumption Detected (#51)! Job {job_id} flagged."
 
         return f" Normal: Job {job_id} usage is within declared capacity."
+
+    # US17: Unit Health Status Tracking
+    def unit_health_status(self):
+        status = []
+
+        for unit in self.units:
+            load_percent = (unit.current_load / unit.max_capacity) * 100
+
+            if load_percent < 30:
+                health = "IDLE"
+            elif load_percent <= 80:
+                health = "BUSY"
+            else:
+                health = "OVERLOADED"
+
+            status.append({
+                    "unit_id": unit.id,
+                    "current_load": unit.current_load,
+                    "max_capacity": unit.max_capacity,
+                    "load_percent": round(load_percent, 2),
+                    "health": health
+            })
+
+        return status
