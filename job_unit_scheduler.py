@@ -38,6 +38,11 @@ class Job:
         self.status = "Pending"
         self.dependencies: List[int] = []
         self.detailed_logging = False
+        self.start_time = None
+        self.max_runtime = None
+        self.failure_count = 0
+        self.last_error_message = ""
+        self.priority_change_log = []
 
         # timeout_handling
         self.start_time = None
@@ -275,6 +280,8 @@ class JobUnitScheduler:
             return "Error: Unit not found."
         if (unit.current_load + job.required_capacity) <= unit.max_capacity:
             unit.current_load += job.required_capacity
+            job.status = "In Progress"
+            job.start_time = datetime.now()
             job.units.append(f"Unit {unit_id}")
             return f"Success! Job {job_id} assigned. Unit {unit_id} load: {unit.current_load}/{unit.max_capacity}"
         else:
@@ -546,6 +553,7 @@ class JobUnitScheduler:
 
         return f" Normal: Job {job_id} usage is within declared capacity."
 
+
     # US17: Unit Health Status Tracking
     def unit_health_status(self):
         status = []
@@ -603,3 +611,19 @@ class JobUnitScheduler:
             return f"Job {job_id} preempted Job {running_job.id} and started execution."
 
         return f"Job {job_id} not started. Running Job {running_job.id} has higher or equal priority."
+
+        # US50: Auto-Cancel Stalled Jobs
+    def auto_cancel_stalled_jobs_50(self, timeout_seconds):
+            stalled_jobs = []
+            now = datetime.now()
+            for job in self.jobs:
+
+                if job.status == "In Progress" and job.start_time:
+                    elapsed_time = (now - job.start_time).total_seconds()
+                    if elapsed_time > timeout_seconds:
+                        job.status = "Cancelled (Stalled)"
+                        job.complete = False
+                        job.last_error_message = f"Auto-cancelled after {elapsed_time:.1f}s of inactivity."
+                        stalled_jobs.append(job)
+
+            return stalled_jobs

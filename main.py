@@ -37,6 +37,7 @@ def show_menu():
     print("21. Job Resource Overconsumption Detection (US51)")
     print("22. Schedule Job (Preemption Rules) (US14)")
     print("23. Mark Job as Failed (US42)")
+    print("24. Auto-Cancel Stalled Jobs (US50)")
     print("0. Exit")
 
 def show_config_menu():
@@ -60,7 +61,7 @@ def show_timeout_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 23):- ")
+    choice=input("Enter your choice ( 1 to 24):- ")
 
     # US1: Add job
     if choice == "1":
@@ -555,6 +556,22 @@ while True:
 
         except ValueError:
             print("Invalid input. Please enter a numerical Job ID.")
+
+    elif choice == "24":
+        print("\n=> Auto-Cancel Stalled Jobs #50")
+        try:
+            threshold = int(input("Enter stall threshold in seconds (default 300): ") or 300)
+
+            cancelled_jobs = s.auto_cancel_stalled_jobs_50(threshold)
+
+            if not cancelled_jobs:
+                print("No stalled jobs detected.")
+            else:
+                print(f"\nSuccessfully cancelled {len(cancelled_jobs)} stalled job(s):")
+                for job in cancelled_jobs:
+                    print(f" - [ID: {job.id}] {job.name} (Stalled for > {threshold}s)")
+        except ValueError:
+            print("Invalid input. Please enter a number for the threshold.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
