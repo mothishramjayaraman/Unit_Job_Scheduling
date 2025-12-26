@@ -339,8 +339,7 @@ class JobUnitScheduler:
                 return True
             return False
 
-            # US56: Remove Unit From Scheduler
-
+    # US56: Remove Unit From Scheduler
     def us56_remove_unit(self, unit_id: int) -> bool:
         unit_to_remove = None
         for unit in self.units:
