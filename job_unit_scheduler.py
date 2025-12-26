@@ -47,6 +47,19 @@ class Job:
 
 class JobUnitScheduler:
 
+    #Priority Rules
+    PRIORITY_ORDER = {
+        1: 1,  # Critical
+        2: 2,  # Urgent
+        3: 3,  # Standard
+        4: 4,  # Low
+        5: 5  # Background
+    }
+
+    #US14: Comparison Priority(Preemption)
+    def preempting(self, new_job, running_job):
+        return self.PRIORITY_ORDER[new_job.priority] < self.PRIORITY_ORDER[running_job.priority]
+
     def __init__(self):
 
         self.jobs: List[Job] = []
@@ -65,6 +78,7 @@ class JobUnitScheduler:
         self.Des_length = 100
         self.system_capabilities: set = set()
         self.default_deadline_hours = 24
+        self.current_running_job_id = None
 
     # US1: Add Job
     def add_job(self, name, description, deadline=None, priority=5, required_capacity=10.0):
@@ -511,3 +525,37 @@ class JobUnitScheduler:
             })
 
         return status
+
+    # US14: Schedule Job Preemption Rules
+    def schedule_job(self, job_id: int):
+        new_job = self.view_job(job_id)
+        if not new_job:
+            return "Error: Job not found."
+
+        if new_job.complete:
+            return "Cannot schedule a completed job."
+
+        if self.current_running_job_id is None:
+            new_job.status = "RUNNING"
+            new_job.start_time = datetime.now()
+            self.current_running_job_id = new_job.id
+            return f"Job {job_id} started."
+
+        running_job = self.view_job(self.current_running_job_id)
+
+        if not running_job:
+            new_job.status = "RUNNING"
+            new_job.start_time = datetime.now()
+            self.current_running_job_id = new_job.id
+            return f"Job {job_id} started."
+
+        if self.preempting(new_job, running_job):
+            running_job.status = "PAUSED"
+
+            new_job.status = "RUNNING"
+            new_job.start_time = datetime.now()
+            self.current_running_job_id = new_job.id
+
+            return f"Job {job_id} preempted Job {running_job.id} and started execution."
+
+        return f"Job {job_id} not started. Running Job {running_job.id} has higher or equal priority."
