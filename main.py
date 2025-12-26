@@ -36,6 +36,7 @@ def show_menu():
     print("20. Job Timeout Handling (US69)")
     print("21. Job Resource Overconsumption Detection (US51)")
     print("22. Schedule Job (Preemption Rules) (US14)")
+    print("23. Mark Job as Failed (US42)")
     print("0. Exit")
 
 def show_config_menu():
@@ -59,7 +60,7 @@ def show_timeout_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 22):- ")
+    choice=input("Enter your choice ( 1 to 23):- ")
 
     # US1: Add job
     if choice == "1":
@@ -535,7 +536,25 @@ while True:
                 print(f"Job {job.id} status → {job.status}")
         except ValueError:
             print("Invalid input. Please enter a numerical Job ID.")
+    elif choice == "23":
+        print("\n=== Mark Job as Failed (US42) ===")
+        try:
+            job_id = int(input("Enter job ID: "))
+            message = input("Enter failure reason: ").strip() or "Unknown error"
 
+            result = s.mark_job_failed(job_id, message)
+            print(result)
+
+            job = s.view_job(job_id)
+            if job:
+                print("--------------------------------")
+                print(f"Job ID        : {job.id}")
+                print(f"Status        : {job.status}")
+                print(f"Retries       : {job.retry_count}/{job.max_retries}")
+                print(f"Last Error    : {job.last_error_message}")
+
+        except ValueError:
+            print("Invalid input. Please enter a numerical Job ID.")
     # Exit from menu
     elif choice == "0":
         print("Exiting...")

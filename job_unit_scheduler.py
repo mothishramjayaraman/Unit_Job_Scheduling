@@ -39,6 +39,14 @@ class Job:
         self.dependencies: List[int] = []
         self.detailed_logging = False
 
+        # timeout_handling
+        self.start_time = None
+        self.max_runtime = None
+        self.failure_count = 0
+        self.last_error_message = None
+
+        self.priority_change_log = []
+
     def __str__(self):
         status = "Completed" if self.complete else "Pending"
 
@@ -461,6 +469,42 @@ class JobUnitScheduler:
 
             return f"Job {job_id} started with max runtime {max_runtime} seconds."
 
+    # US42: Job retry limit
+    def mark_job_failed(self, job_id: int, failure_message: str):
+        job = self.view_job(job_id)
+        if not job:
+            return "Job not found"
+
+        if job.complete:
+            return "Cannot retry a completed job"
+
+        result = JobUnitScheduler.retry_handler(job, failure_message)
+
+        if result == "RETRYING":
+            return (
+                f"Job {job_id} failed → retrying "
+                f"({job.retry_count}/{job.max_retries})"
+            )
+
+        return (
+            f"Job {job_id} reached retry limit "
+            f"({job.retry_count}/{job.max_retries}) → FAILED_PERMANENTLY"
+        )
+
+    # US42: Static retry policy
+    @staticmethod
+    def retry_handler(job, failure_message: str):
+        job.failure_count += 1
+        job.last_error_message = failure_message
+
+        job.retry_count += 1
+
+        if job.retry_count < job.max_retries:
+            job.status = "RETRYING"
+            return "RETRYING"
+
+        job.status = "FAILED_PERMANENTLY"
+        return "FAILED_PERMANENTLY"
     # US69: Automatic job timeout handling(check timeout)
     def check_job_timeouts(self):
             now = datetime.now()
