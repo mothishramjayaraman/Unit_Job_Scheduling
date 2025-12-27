@@ -52,6 +52,7 @@ def show_config_menu():
     print("6. Configure Default Deadline(US60)")
     print("7. Enable/Disable Job Logging (US59)")
     print("8. Remove Unit From Scheduler (US56)")
+    print("9. Mark Unit as Preferred(US54)")
     print("0. Back to Main Menu")
 
 def show_timeout_menu():
@@ -208,7 +209,7 @@ while True:
     elif choice == "11":
         while True:
             show_config_menu()
-            config_choice = input("\nEnter your configuration choice (1-8):- ")
+            config_choice = input("\nEnter your configuration choice (1-9):- ")
             # US58: Set Job Priority Label
             if config_choice == "1":
                 print("\n--- Set Priority Label (US58) ---")
@@ -320,6 +321,23 @@ while True:
                             print("Error: Unit ID not found in scheduler inventory.")
                     except ValueError:
                         print("Invalid input. Please enter a numerical Unit ID.")
+
+            # US54: Mark Unit as Preferred
+            elif config_choice == "9":
+                        print("\n--- Mark Unit as Preferred (US54) ---")
+                        try:
+                            u_id = int(input("Enter Unit ID to change preference: "))
+                            status_input = input("Mark as Preferred? (yes/no): ").lower()
+
+                            is_pref = True if status_input == "yes" else False
+
+                            if s.us54_set_unit_preference(u_id, is_pref):
+                                status_text = "PREFERRED" if is_pref else "NORMAL"
+                                print(f"Success! Unit {u_id} status updated to {status_text}.")
+                            else:
+                                print("Error: Unit ID not found.")
+                        except ValueError:
+                            print("Invalid input. Please enter a numerical Unit ID.")
 
         # 0. Back to Main Menu
             elif config_choice == "0":

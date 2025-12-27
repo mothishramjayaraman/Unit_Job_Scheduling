@@ -15,9 +15,11 @@ class Unit:
         self.historical_loads = []
         self.error_logs = []
         self.dependencies: List[int] = []
+        self.is_preferred = False
 
     def __str__(self):
-        return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity} | Errors: {len(self.error_logs)}"
+                pref_status = " [PREFERRED]" if self.is_preferred else ""
+                return f"[Unit {self.id}] Caps: {', '.join(self.capabilities)} | Load: {self.current_load}/{self.max_capacity} | Errors: {len(self.error_logs)}"
 
 
 
@@ -270,6 +272,14 @@ class JobUnitScheduler:
                 unit.historical_loads = [current_val]
                 return True
         return False
+
+    # US54: Mark Unit as Preferred
+    def us54_set_unit_preference(self, unit_id: int, preferred: bool) -> bool:
+            for unit in self.units:
+                if unit.id == unit_id:
+                    unit.is_preferred = preferred
+                    return True
+            return False
 
     # US43: Unit Capacity Validation
     def us43_validate_and_assign(self, job_id: int, unit_id: int) -> str:
