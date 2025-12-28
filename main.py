@@ -40,6 +40,7 @@ def show_menu():
     print("24. Auto-Cancel Stalled Jobs (US50)")
     print("25. Analyze Job Execution Patterns (US52)")
     print("26. Predict Next Available Unit Slot (US47)")
+    print("27. Export Job Metrics (US15)")
     print("0. Exit")
 
 def show_config_menu():
@@ -61,10 +62,14 @@ def show_timeout_menu():
     print("2. Check Job Timeouts")
     print("0. Back to Main Menu")
 
+def input_optional(prompt: str):
+    value = input(prompt).strip()
+    return value if value else None
+
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 25):- ")
+    choice=input("Enter your choice ( 1 to 27):- ")
 
     # US1: Add job
     if choice == "1":
@@ -620,7 +625,7 @@ while True:
             print("\n[Priority Distribution]")
             for p_level, count in analysis['priority_counts'].items():
                 print(f" - Priority P{p_level}: {count} jobs")
-        # US47: Predict Next Available Unit Slot
+    # US47: Predict Next Available Unit Slot
     elif choice == "26":
         print("\n=> Predict Next Available Unit Slot #47")
         try:
@@ -641,6 +646,15 @@ while True:
                     print(" This unit is currently at high capacity.")
         except ValueError:
             print("Invalid input. Please enter a numerical Unit ID.")
+
+    #US15: Job export Metrics
+    elif choice == "27":
+        print("\n=== Export Job Metrics ===")
+        path = input_optional(
+            "Enter output CSV path (default: storage/job_metrics.csv): "
+        )
+        result = s.export_job_metrics(path)
+        print(result)
     # Exit from menu
     elif choice == "0":
         print("Exiting...")
