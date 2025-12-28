@@ -3,7 +3,9 @@
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 import time
-
+import csv
+import os
+from datetime import datetime
 
 class Unit:
 
@@ -48,6 +50,7 @@ class Job:
 
         # timeout_handling
         self.start_time = None
+        self.end_time = None
         self.max_runtime = None
         self.failure_count = 0
         self.last_error_message = None
@@ -697,3 +700,37 @@ class JobUnitScheduler:
                 'status': status,
                 'next_slot_estimate': estimate
             }
+
+    #US15: Job Export Metrics
+    def export_job_metrics(self, path: str | None = None):
+        # Default path
+        if path is None:
+            path = "storage/job_metrics.csv"
+
+        # Ensure storage directory exists
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+
+        with open(path, "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                "job_id",
+                "execution_time_seconds",
+                "failure_count",
+                "status"
+            ])
+
+            for j in self.jobs:
+                exec_time = None
+                if j.start_time and j.end_time:
+                    exec_time = round(
+                        (j.end_time - j.start_time).total_seconds(), 2
+                    )
+
+                writer.writerow([
+                    j.id,
+                    exec_time,
+                    j.failure_count,
+                    j.status
+                ])
+
+        return f"Job metrics exported to {path}"
