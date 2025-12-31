@@ -7,7 +7,7 @@ It allows users to manage jobs by creating, updating and tracking their completi
 Each job can be associated with multiple units and jobs can be marked as completed once finished.
 
 This project was developed following Agile principles using user stories, sprints and 
-unit testing as covered in lecture and lab session.
+unit testing.
 
 ---
 
@@ -23,7 +23,7 @@ The system supports the following features, each mapped to user story:
 - Add units to a job
 - View units of a job
 - Mark a job as completed 
-- 
+
 All features are implemented in accordance with the defined user stories (US1- US9).
 
 ---
@@ -51,30 +51,27 @@ This ensures full trackable between requirements, implementation and testing.
 
 The project contains the following files:
 Unit_Job_scheduling/
-|
-|-job_unit_scheduler.py         #Core application logic
-|-main.py                       #Command-line interface
-|-README.md                     #Project documentation 
-|-.gitignore                    #Git ignore layout
-|-.coverage
-|
-|-239067430
-|-tests/
-|-blackbox/
-||--random_based/
-|||---test_239067430_blackbox_random.py
-||--specification_based/
-|||---test_239067430_blackbox_specification.py
-|-whitebox/
-|-statement_branch/
-|-test_239067430_whitebox_statement_branch.py
+|---job_unit_scheduler.py#Core application logic
+|---main.py#Command-line interface
+|---README.md#Project documentation 
+|---.gitignore#Git ignore layout
+|---239067430
+|   |----tests/
+|        |---blackbox/
+|        |   |---random_based/
+|        |   |   |---test_239067430_blackbox_random.py
+|        |   |---specification_based/
+|        |   |   |---test_239067430_blackbox_specification.py
+|        |---whitebox/
+|            |---statement_branch/
+|                |---test_239067430_whitebox_statement_branch.py
 
 ## 5.How to Run the Application
 
 **Software:** Python 3.10 or later
 
-Steps:
-    1. Open terminal in the project root directory
+'Steps:
+    1. Open terminal in the project root directory 
     2. Run the application using : python main.py
     3. Follow the on-screen menu to perform job scheduling operations.
 
