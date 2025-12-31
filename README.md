@@ -98,6 +98,7 @@ The testing strategy includes:
 - Statement and branch coverage
 
 Each test validates:
+
 - Correct system behaviour
 - Expected outputs
 - Proper handling of invalid inputs
