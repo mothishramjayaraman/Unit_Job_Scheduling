@@ -1,7 +1,2 @@
-# PyCharm / IntelliJ IDEA
 .idea/
 *.iml
-
-# Python cache
-__pycache__/
-*.pyc
