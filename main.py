@@ -3,8 +3,7 @@ from datetime import datetime
 
 s = JobUnitScheduler()
 
-s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
-s.add_unit(2, ['CPU', 'Storage', 'NVMe'])
+
 
 print("Welcome to Job Scheduler")
 
@@ -29,7 +28,7 @@ def show_menu():
 while True:
     show_menu()
     print("\n")
-    choice=input("Enter your choice ( 1 to 7):- ")
+    choice=input("Enter your choice:- ")
 
     # US1: Add job
     if choice == "1":
@@ -68,6 +67,7 @@ while True:
             print(f"Name: {job.name}, ")
             print(f"Description: {job.description},")
             print(f"Deadline: {job.deadline}")
+            print(f"Status: {'Completed' if job.complete else 'Pending'}")
         else:
             print("\nJob not found.")
 
