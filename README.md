@@ -1,6 +1,7 @@
 # UnitJobScheduling System
 
 ## 1.Introduction 
+
 The Unit Job Scheduling System is a command-line application developed in Python.
 It allows users to manage jobs by creating, updating and tracking their completion status.
 Each job can be associated with multiple units and jobs can be marked as completed once finished.
@@ -11,6 +12,7 @@ unit testing as covered in lecture and lab session.
 ---
 
 ## 2.Feature Implemented 
+
 The system supports the following features, each mapped to user story:
 - Add a new job
 - List all jobs
@@ -46,6 +48,7 @@ This ensures full trackable between requirements, implementation and testing.
 
 
 ## 4.Project Structure
+
 The project contains the following files:
 Unit_Job_scheduling/
 |
@@ -67,6 +70,7 @@ Unit_Job_scheduling/
 |-test_239067430_whitebox_statement_branch.py
 
 ## 5.How to Run the Application
+
 **Software:** Python 3.10 or later
 
 Steps:
@@ -75,6 +79,7 @@ Steps:
     3. Follow the on-screen menu to perform job scheduling operations.
 
 ## 6.How to Run Tests
+
 Automated tests are implemented using the unittest framework.
 
 Steps:
@@ -83,6 +88,7 @@ Steps:
     3. If all tests pass, the process will end with exit code 0.
 
 ## 7.Testing Approach
+
 The testing strategy includes:
 
 - **Black-box testing**
