@@ -26,6 +26,7 @@ class Unit:
 
 
 class Job:
+    def __init__(self, job_id, name, description, deadline, priority):
     def __init__(self, job_id, name, description, deadline, priority=5, required_capacity=10.0):
         # Add new job object
         self.id = job_id
@@ -85,6 +86,8 @@ class JobUnitScheduler:
         self.next_id = 1
 
         self.units: List[Unit] = []
+        self.default_deadline_hours = 24
+
 
         # US6: Dictionary to store priority labels (default values)
         self.priority_labels: Dict[int, str] = {
@@ -104,7 +107,7 @@ class JobUnitScheduler:
 
         # US Description Validation (if characters exceed >= 100)
         if len(description) > self.Des_length:
-            return "Description too long! Try to add fewer than 100 characters"
+            return None
         # US9 Deadline Handling (if called without a deadline)
         if deadline is None:
 
@@ -115,7 +118,6 @@ class JobUnitScheduler:
             self.next_id += 1
             return job
         else:
-
             deadline_dt = deadline
 
         job = Job(self.next_id, name, description, deadline_dt, priority)

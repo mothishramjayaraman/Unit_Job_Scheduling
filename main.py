@@ -3,6 +3,7 @@ from datetime import datetime
 
 s = JobUnitScheduler()
 
+
 s.add_unit(1, ['GPU', 'High_Mem', 'NVMe'])
 s.units[0].current_load = 80.0
 s.units[0].historical_loads = [60.0, 70.0, 80.0]
@@ -69,6 +70,7 @@ def input_optional(prompt: str):
 while True:
     show_menu()
     print("\n")
+    choice=input("Enter your choice:- ")
     choice=input("Enter your choice ( 1 to 27):- ")
 
     # US1: Add job
@@ -112,6 +114,7 @@ while True:
             print(f"Name: {job.name}, ")
             print(f"Description: {job.description},")
             print(f"Deadline: {job.deadline}")
+            print(f"Status: {'Completed' if job.complete else 'Pending'}")
             print(f"Status: {job.status}")
             print(f"Retry Count: {job.retry_count}/{job.max_retries}")
         else:

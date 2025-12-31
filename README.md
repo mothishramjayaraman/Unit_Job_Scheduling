@@ -1,14 +1,18 @@
 # UnitJobScheduling System
 
 ## 1.Introduction 
-The Unit Job Scheduling System is a simple command-line application developed in Python.
-This system is used to help users manage jobs by breaking them into smaller units, tracking progress and marking jobs as completed.
 
-This project was developed following Agile principles using user stories, sprints and unit testing as covered in lecture and lab session.
+The Unit Job Scheduling System is a command-line application developed in Python.
+It allows users to manage jobs by creating, updating and tracking their completion status.
+Each job can be associated with multiple units and jobs can be marked as completed once finished.
+
+This project was developed following Agile principles using user stories, sprints and 
+unit testing as covered in lecture and lab session.
 
 ---
 
 ## 2.Feature Implemented 
+
 The system supports the following features, each mapped to user story:
 - Add a new job
 - List all jobs
@@ -19,13 +23,14 @@ The system supports the following features, each mapped to user story:
 - Add units to a job
 - View units of a job
 - Mark a job as completed 
+- 
 All features are implemented in accordance with the defined user stories (US1- US9).
 
 ---
 
-## 3.User Story Trackable 
+## 3.User Story Trackable
 
-Each user story is apply in the core system and validated according with unit test
+Each user story is apply in the core system and validated according with unit tests
 
 | User Story   |   Description          | Implementation               |   Test Case
 |--------------|------------------------|------------------------------|----------------------
@@ -43,43 +48,67 @@ This ensures full trackable between requirements, implementation and testing.
 
 
 ## 4.Project Structure
+
 The project contains the following files:
 Unit_Job_scheduling/
 |
-|-Job_unit_Scheduler.py         #Core application logic
+|-job_unit_scheduler.py         #Core application logic
 |-main.py                       #Command-line interface
-|-test_job_unit_scheduler.py    #Unit tests
 |-README.md                     #Project documentation 
+|-.gitignore                    #Git ignore layout
+|-.coverage
+|
+|-239067430
+|-tests/
+|-blackbox/
+||--random_based/
+|||---test_239067430_blackbox_random.py
+||--specification_based/
+|||---test_239067430_blackbox_specification.py
+|-whitebox/
+|-statement_branch/
+|-test_239067430_whitebox_statement_branch.py
 
 ## 5.How to Run the Application
+
 **Software:** Python 3.10 or later
 
 Steps:
-    1. Open terminal in the project directory
+    1. Open terminal in the project root directory
     2. Run the application using : python main.py
     3. Follow the on-screen menu to perform job scheduling operations.
 
-## 6.How to Run UnitTests
-Unittests are written to verify the behaviour of all executed user stories.
+## 6.How to Run Tests
+
+Automated tests are implemented using the unittest framework.
 
 Steps:
-    1. Open terminal in the project directory
-    2. Run the test file using: python test_job_unit_scheduler.py
+    1. Open terminal in the project root directory
+    2. Run all the tests using: python -m unittest discover -s 239067430/tests -p "test_*.py"
     3. If all tests pass, the process will end with exit code 0.
 
 ## 7.Testing Approach
-Each user story has a corresponding unit test to validate:
 
-- Correct functionality
-- Expected output
+The testing strategy includes:
+
+- **Black-box testing**
+- Random-based testing
+- Specification-based testing
+- **White-box testing**
+- Statement and branch coverage
+
+Each test validates:
+
+- Correct system behaviour
+- Expected outputs
 - Proper handling of invalid inputs
 
-This ensures the reliability and correctness of the system.
+Code coverage analysis was performed using the coverage tool to evaluate test effectiveness.
 
 ---
 
 ## 8.Conclusion
 
-The Unit Job Scheduling System show the use of Agile development practices, modular design and unit testing.
-All required features have been implemented, tested and documented according to the module guideline.
+The Unit Job Scheduling System show the use of Agile development practices, modular design and systematic testing.
+All required user stories have been implemented, tested and documented according to the module guideline.
 
