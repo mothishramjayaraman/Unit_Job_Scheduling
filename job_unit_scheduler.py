@@ -26,7 +26,6 @@ class Unit:
 
 
 class Job:
-    def __init__(self, job_id, name, description, deadline, priority):
     def __init__(self, job_id, name, description, deadline, priority=5, required_capacity=10.0):
         # Add new job object
         self.id = job_id
@@ -107,7 +106,8 @@ class JobUnitScheduler:
 
         # US Description Validation (if characters exceed >= 100)
         if len(description) > self.Des_length:
-            return None
+            return "Description too long! Try to add fewer than 100 characters"
+
         # US9 Deadline Handling (if called without a deadline)
         if deadline is None:
 
