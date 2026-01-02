@@ -26,6 +26,7 @@ class Unit:
 
 
 class Job:
+   # def __init__(self, job_id, name, description, deadline, priority):
     def __init__(self, job_id, name, description, deadline, priority=5, required_capacity=10.0):
         # Add new job object
         self.id = job_id
@@ -66,6 +67,7 @@ class Job:
 
 class JobUnitScheduler:
 
+
     #Priority Rules
     PRIORITY_ORDER = {
         1: 1,  # Critical
@@ -81,11 +83,16 @@ class JobUnitScheduler:
 
     def __init__(self):
 
-        self.jobs: List[Job] = []
-        self.next_id = 1
-
-        self.units: List[Unit] = []
+        self.jobs = {}
+        self.next_job_id = 1
+        self.units = []
         self.default_deadline_hours = 24
+        self.current_running_job_id = None
+       # self.jobs: List[Job] = []
+        #self.next_id = 1
+
+        #self.units: List[Unit] = []
+        #self.default_deadline_hours = 24
 
 
         # US6: Dictionary to store priority labels (default values)
@@ -113,16 +120,17 @@ class JobUnitScheduler:
 
             deadline_dt = datetime.now() + timedelta(hours=self.default_deadline_hours)
             print(f"(Applying US9 default deadline: {self.default_deadline_hours} hours.)")
-            job = Job(self.next_id, name, description, deadline_dt, priority, required_capacity)
-            self.jobs.append(job)
-            self.next_id += 1
+            job = Job(self.next_job_id, name, description, deadline_dt, priority, required_capacity)
+            self.jobs[self.next_job_id] = job
+            self.next_job_id += 1
             return job
+
         else:
             deadline_dt = deadline
 
-        job = Job(self.next_id, name, description, deadline_dt, priority)
-        self.jobs.append(job)
-        self.next_id += 1
+        job = Job(self.next_job_id, name, description, deadline_dt, priority, required_capacity)
+        self.jobs[self.next_job_id] = job
+        self.next_job_id += 1
         return job
 
     # US2: List All Jobs
@@ -131,10 +139,16 @@ class JobUnitScheduler:
 
     # US3: View a job by ID
     def view_job(self, job_id):
-        for job in self.jobs:
-            if job.id == job_id:
-                return job
-        return None
+        if job_id <=0:
+            return None
+        if job_id not in self.jobs:
+            return None
+        return self.jobs[job_id]
+
+       # for job in self.jobs:
+        # if job.id == job_id:
+         # return job
+        #return None
 
     # US4: Edit Job Description
     def edit_job_description(self, job_id, description):
