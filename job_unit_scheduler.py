@@ -192,23 +192,25 @@ class JobUnitScheduler:
 
     # US9: Complete a job
     def complete_job(self, job_id):
-        for job in self.jobs:
-            if job.id == job_id:
-                job.complete = True
-                job.status = "Done"
-                job.end_time = datetime.now()
-                return True  # job marked completed
-        return False  # job not found
+        job = self.jobs.get(job_id)
+        if not job:
+            return False
+
+        job.complete = True
+        job.status = "Done"
+        job.end_time = datetime.now()
+        return True
 
     # US18: Clear completed jobs
     def remove_completed_jobs(self):
-        prev = len(self.jobs)
-        current_job = []
-        for job in self.jobs:
+        remaining_jobs = {}
+
+        for job_id, job in self.jobs.items():
             if not job.complete:
-                current_job.append(job)
-        self.jobs = current_job
-        erased = prev - len(self.jobs)
+                remaining_jobs[job_id] = job
+
+        erased = len(self.jobs) - len(remaining_jobs)
+        self.jobs = remaining_jobs
 
         return f"{erased} completed job(s) removed."
 
@@ -241,10 +243,7 @@ class JobUnitScheduler:
 
     # US20 Get job for Tag management
     def get_job(self, job_id):
-        for job in self.jobs:
-            if job.id == job_id:
-                return job
-        return None
+        return self.jobs.get(job_id)
 
     # US20 Tag job(add)
     TAGS_CONTAINER = {"system", "user", "batch", "maintenance"}
@@ -460,7 +459,7 @@ class JobUnitScheduler:
         now = datetime.now()
         escalated_jobs = []
 
-        for job in self.jobs:
+        for job in self.jobs.values():
             if job.complete or not job.deadline:
                 continue
 
@@ -549,7 +548,7 @@ class JobUnitScheduler:
             now = datetime.now()
             timed_out_jobs = []
 
-            for job in self.jobs:
+            for job in self.jobs.values():
                 if job.status == "RUNNING":
                     if job.start_time and job.max_runtime:
                         elapsed = (now - job.start_time).total_seconds()
@@ -735,7 +734,7 @@ class JobUnitScheduler:
                 "status"
             ])
 
-            for j in self.jobs:
+            for j in self.jobs.values():
                 exec_time = None
                 if j.start_time and j.end_time:
                     exec_time = round(
