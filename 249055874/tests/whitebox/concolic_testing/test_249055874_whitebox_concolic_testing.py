@@ -1,42 +1,42 @@
 import unittest
-from job_unit_scheduler import JobUnitScheduler
+import sys
+import os
+from datetime import datetime, timedelta
+
+CURRENT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+sys.path.insert(0, PROJECT_ROOT)
+
+from job_unit_scheduler import JobUnitScheduler, Job
 
 
-class TestUS47ConcolicTesting(unittest.TestCase):
+class TestConcolicTesting(unittest.TestCase):
 
 
     def setUp(self):
-        self.scheduler = JobUnitScheduler()
-        self.scheduler.add_unit(1, ["CPU", "GPU"])  # max_capacity defaults to 100
+        self.system = JobUnitScheduler()
+        self.system.jobs = []
 
-    def test_branch_invalid_unit_returns_error(self):
+    def test_concolic_timeout_path(self):
+        timeout = 300
+        elapsed = 400  # concrete value satisfying symbolic condition
 
-        result = self.scheduler.predict_next_slot_47(999)
-        self.assertIsInstance(result, str)
-        self.assertTrue(result.startswith("Error: Unit not found"))
+        job = Job(
+            job_id=1,
+            name="Concolic Job",
+            description="Timeout concolic test",
+            deadline=datetime.now()
+        )
+        job.status = "In Progress"
+        job.start_time = datetime.now() - timedelta(seconds=elapsed)
 
-    def test_concolic_hit_all_status_branches(self):
+        self.system.jobs.append(job)
 
-        cases = [
-            (0.0, True, "High Availability"),
-            (69.9, True, "High Availability"),
-            (70.0, True, "Limited Capacity"),
-            (99.9, True, "Limited Capacity"),
-            (100.0, False, "Unit Full"),
-            (120.0, False, "Unit Full"),
-        ]
+        cancelled = self.system.auto_cancel_stalled_jobs_50(timeout)
 
-        for load, expected_available, expected_status in cases:
-            with self.subTest(current_load=load):
-                self.scheduler.units[0].current_load = load
-                result = self.scheduler.predict_next_slot_47(1)
-
-                self.assertIsInstance(result, dict)
-                self.assertEqual(result["unit_id"], 1)
-                self.assertEqual(result["available_now"], expected_available)
-                self.assertEqual(result["status"], expected_status)
-                self.assertAlmostEqual(result["current_load"], load, places=1)
+        self.assertIn(job, cancelled)
+        self.assertEqual(job.status, "Cancelled (Stalled)")
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main()

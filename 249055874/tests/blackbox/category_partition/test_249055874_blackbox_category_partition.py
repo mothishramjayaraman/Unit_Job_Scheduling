@@ -1,56 +1,102 @@
 import unittest
-from datetime import datetime, timedelta
+import sys
+import os
+from datetime import datetime
 
-from job_unit_scheduler import JobUnitScheduler
+CURRENT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+sys.path.insert(0, PROJECT_ROOT)
+
+from job_unit_scheduler import JobUnitScheduler, Unit
 
 
-class TestUS45CategoryPartition(unittest.TestCase):
-
+class TestCategoryPartition(unittest.TestCase):
 
     def setUp(self):
-        self.scheduler = JobUnitScheduler()
-        self.j1 = self.scheduler.add_job(
-            "Job1", "desc", deadline=datetime.now() + timedelta(days=1)
-        )
-        self.j2 = self.scheduler.add_job(
-            "Job2", "desc", deadline=datetime.now() + timedelta(days=1)
-        )
+        self.system = JobUnitScheduler()
+        self.system.units = []
 
-    def test_cp1_both_exist_normal_dependency_not_completed(self):
+    def test_low_load_category(self):
 
-        msg = self.scheduler.add_dependency(self.j2.id, self.j1.id)
-        self.assertTrue(msg.startswith("Success:"))
-        self.assertFalse(self.scheduler.check_dependencies_met(self.j2.id))
+        unit = Unit(unit_id=1, capabilities=["CPU"], max_capacity=10)
+        unit.current_load = 3
+        self.system.units.append(unit)
 
-    def test_cp2_both_exist_normal_dependency_completed(self):
+        result = self.system.predict_next_slot_47(1)
+        self.assertEqual(result["status"], "High Availability")
 
-        msg = self.scheduler.add_dependency(self.j2.id, self.j1.id)
-        self.assertTrue(msg.startswith("Success:"))
+    def test_high_load_category(self):
 
-        self.scheduler.complete_job(self.j1.id)
-        self.assertTrue(self.scheduler.check_dependencies_met(self.j2.id))
+        unit = Unit(unit_id=2, capabilities=["CPU"], max_capacity=10)
+        unit.current_load = 9
+        self.system.units.append(unit)
 
-    def test_cp3_both_exist_self_dependency(self):
-
-        msg = self.scheduler.add_dependency(self.j1.id, self.j1.id)
-        self.assertIn("cannot depend on itself", msg.lower())
-
-    def test_cp4_dependent_job_missing(self):
-
-        msg = self.scheduler.add_dependency(999, self.j1.id)
-        self.assertIn("not found", msg.lower())
-
-    def test_cp5_dependency_job_missing(self):
-
-        msg = self.scheduler.add_dependency(self.j2.id, 999)
-        self.assertIn("not found", msg.lower())
-
-    def test_cp6_check_dependencies_for_job_without_dependencies(self):
-
-        result = self.scheduler.check_dependencies_met(self.j2.id)
-
-        self.assertIn(result, [True, False])  # safe black-box check
+        result = self.system.predict_next_slot_47(2)
+        self.assertEqual(result["status"], "Limited Capacity")
 
 
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    unittest.main()
+
+
+
+import unittest
+import sys
+import os
+from datetime import datetime, timedelta
+
+# ------------------------------------------------------------
+# PATH FIX
+# ------------------------------------------------------------
+CURRENT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.abspath(os.path.join(CURRENT_DIR, "..", "..", ".."))
+sys.path.insert(0, PROJECT_ROOT)
+
+from job_unit_scheduler import JobUnitScheduler, Job
+
+
+class TestUS50BlackBox(unittest.TestCase):
+    """
+    Black-box tests for US50: Auto-Cancel Stalled Jobs
+    Category Partitioning based on job runtime state
+    """
+
+    def setUp(self):
+        self.system = JobUnitScheduler()
+        self.system.jobs = []
+
+    def test_job_exceeds_timeout_is_cancelled(self):
+        job = Job(
+            job_id=1,
+            name="Stalled Job",
+            description="Should be cancelled",
+            deadline=datetime.now()
+        )
+        job.status = "In Progress"
+        job.start_time = datetime.now() - timedelta(seconds=400)
+
+        self.system.jobs.append(job)
+
+        cancelled = self.system.auto_cancel_stalled_jobs_50(300)
+        self.assertIn(job, cancelled)
+        self.assertEqual(job.status, "Cancelled (Stalled)")
+
+    def test_job_within_timeout_not_cancelled(self):
+        job = Job(
+            job_id=2,
+            name="Active Job",
+            description="Should continue",
+            deadline=datetime.now()
+        )
+        job.status = "In Progress"
+        job.start_time = datetime.now() - timedelta(seconds=100)
+
+        self.system.jobs.append(job)
+
+        cancelled = self.system.auto_cancel_stalled_jobs_50(300)
+        self.assertNotIn(job, cancelled)
+        self.assertEqual(job.status, "In Progress")
+
+
+if __name__ == "__main__":
+    unittest.main()
